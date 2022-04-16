@@ -1,0 +1,7 @@
+#import './bookFragment.graphql'
+
+query Book($id: ID!) {
+  book(id: $id) {
+    ...Book
+  }
+}

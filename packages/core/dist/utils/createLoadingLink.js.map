@@ -1,0 +1,1 @@
+{"version":3,"file":"createLoadingLink.js","sourceRoot":"","sources":["../../src/utils/createLoadingLink.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,UAAU,EAAE,MAAM,gBAAgB,CAAC;AAExD,MAAM,UAAU,iBAAiB;IAC/B,OAAO,IAAI,UAAU,CAAC,GAAG,EAAE;QACzB,OAAO,IAAI,UAAU,CAAC,GAAG,EAAE,GAAE,CAAC,CAAC,CAAC;IAClC,CAAC,CAAC,CAAC;AACL,CAAC"}

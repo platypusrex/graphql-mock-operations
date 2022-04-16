@@ -1,0 +1,10 @@
+.App-header {
+  display: flex;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 1rem;
+}
+
+.App-link {
+  color: #61dafb;
+}

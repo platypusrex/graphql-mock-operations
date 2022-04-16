@@ -1,0 +1,18 @@
+import { ComponentProps, JSXElementConstructor } from 'react';
+import { ComponentStory } from '@storybook/react';
+
+type ReactComponentProps = keyof JSX.IntrinsicElements | JSXElementConstructor<any>;
+interface ApolloStoryParameters<TProviderProps extends ReactComponentProps> {
+  apolloClient: Omit<ComponentProps<TProviderProps>, 'children'>
+}
+
+export interface StoryWithApollo<
+  TProviderProps extends ReactComponentProps,
+  TComponentProps extends ReactComponentProps = any
+  > extends ComponentStory<TComponentProps> {
+  parameters?: ApolloStoryParameters<TProviderProps>;
+}
+
+if (module && module.hot && module.hot.decline) {
+  module.hot.decline();
+}

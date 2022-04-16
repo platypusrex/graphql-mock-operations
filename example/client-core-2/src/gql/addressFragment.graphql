@@ -1,0 +1,6 @@
+fragment Address on Address {
+  addressLineOne
+  city
+  state
+  zip
+}

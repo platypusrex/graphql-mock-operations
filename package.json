@@ -1,0 +1,29 @@
+{
+  "name": "graphql-mock-operations-root",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "example/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "build:packages": "turbo run build --parallel --scope=\"@graphql-mock-operations/core\" --scope=\"@graphql-mock-operations/core-temp\" --scope=\"@graphql-mock-operations/codegen-plugin\"  --scope=\"@graphql-mock-operations/storybook-addon\"",
+    "dev": "turbo run dev --parallel",
+    "dev:example": "npx concurrently \"yarn workspace example-server start\" \"yarn workspace example-client start\" ",
+    "dev:example:storybook": "npx concurrently \"yarn dev:example\" \"yarn workspace example-client storybook\"",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "clean:all": "turbo run clean"
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1",
+    "turbo": "latest"
+  },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=14.0.0"
+  },
+  "packageManager": "yarn@1.22.11"
+}

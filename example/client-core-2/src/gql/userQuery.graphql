@@ -1,0 +1,7 @@
+#import './userFragment.graphql'
+
+query User ($id: ID!) {
+  user (id: $id) {
+    ...User
+  }
+}

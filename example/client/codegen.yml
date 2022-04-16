@@ -1,0 +1,11 @@
+schema: http://localhost:4001/
+documents: './src/gql/**/*.graphql'
+generates:
+  src/typings/generated.d.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - "@graphql-mock-operations/codegen-plugin"
+  introspection.json:
+    plugins:
+      - introspection

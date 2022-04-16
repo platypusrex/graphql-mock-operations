@@ -1,0 +1,32 @@
+{
+  "name": "@graphql-mock-operations/codegen-plugin",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Frank Cooke",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:temp": "tsc --project tsconfig.json",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs",
+    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/types --project tsconfig.json",
+    "build:tsc:cjs": "tsc --module commonjs --outDir dist --project tsconfig.json",
+    "build:tsc:esm": "tsc --module esnext --outDir dist/esm --project tsconfig.json",
+    "build": "yarn clean && concurrently \"yarn build:tsc:cjs\" \"yarn build:tsc:esm\"",
+    "clean": "npx rimraf dist"
+  },
+  "devDependencies": {
+    "graphql": "^16.3.0",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@graphql-codegen/plugin-helpers": "^2.4.1",
+    "@graphql-codegen/visitor-plugin-common": "^2.7.1"
+  },
+  "peerDependencies": {
+    "graphql": "^16.*"
+  }
+}

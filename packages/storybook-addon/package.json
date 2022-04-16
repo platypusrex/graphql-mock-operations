@@ -1,0 +1,55 @@
+{
+  "name": "@graphql-mock-operations/storybook-addon",
+  "version": "1.0.0",
+  "author": "Frank Cooke",
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "*.js",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "build:es": " yarn clean && concurrently \"node build.js\" \"yarn build:ts\"",
+    "build:cjs": "babel ./src -d ./dist/cjs --extensions \".ts,.tsx\"",
+    "build:esm": "babel ./src -d ./dist/esm --env-name esm --extensions \".ts,.tsx\"",
+    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/types --project tsconfig.json",
+    "build:watch": "concurrently \"yarn build:esm -- --watch\" \"yarn build:cjs\"  \"yarn build:ts -- --watch\"",
+    "build": "yarn clean && concurrently \"yarn build:cjs\" \"yarn build:esm\" \"yarn build:ts\"",
+    "build:tsc:cjs": "tsc --module commonjs --outDir dist/cjs --declaration false --project tsconfig.json",
+    "build:tsc:esm": "tsc --module esnext --outDir dist/esm --declaration false --project tsconfig.json",
+    "build:tsc": "yarn clean && concurrently \"yarn build:tsc:cjs\" \"yarn build:tsc:esm\" \"yarn build:ts\"",
+    "clean": "npx rimraf dist"
+  },
+  "devDependencies": {
+    "@apollo/client": "^3.5.9",
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@storybook/react": "^6.4.19",
+    "@types/react": "^17.0.39",
+    "babel-loader": "^8.2.3",
+    "babel-preset-minify": "^0.5.1",
+    "concurrently": "^7.0.0",
+    "esbuild": "^0.14.25",
+    "graphql": "^16.3.0",
+    "parcel": "^2.3.2",
+    "parcel-bundler": "^1.12.5",
+    "react": "^17.0.2",
+    "tiny-glob": "^0.2.9",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@storybook/addons": "^6.4.19",
+    "@storybook/components": "^6.4.19"
+  },
+  "peerDependencies": {
+    "@apollo/client": "^3.*",
+    "@storybook/react": "^6.4.19",
+    "react": "^17.*"
+  }
+}

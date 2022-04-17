@@ -15,6 +15,9 @@ coverage
 # next.js
 .next/
 out/
+
+# build directories
+dist
 build
 
 # misc

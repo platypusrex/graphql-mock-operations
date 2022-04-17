@@ -175,24 +175,17 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
     onResolved,
     ...rest
   }: MockProviderProps<TMockGQLOperations['state']> &
-    ProtectedMockedProviderProps): CreateApolloClient => {
-    console.log(
-      mergeOperations
+    ProtectedMockedProviderProps): CreateApolloClient => ({
+    mocks: {
+      resolvers: mergeOperations
         ? this.mergeOperations(mergeOperations)
-        : this.createOperations(operationState)
-    );
-    return {
-      mocks: {
-        resolvers: mergeOperations
-          ? this.mergeOperations(mergeOperations)
-          : this.createOperations(operationState),
-        introspectionResult: this.introspectionResult,
-        delay: delay,
-        onResolved,
-      },
-      ...rest,
-    };
-  };
+        : this.createOperations(operationState),
+      introspectionResult: this.introspectionResult,
+      delay: delay,
+      onResolved,
+    },
+    ...rest,
+  });
 
   private mapOperations = (
     operations: OperationFn<TMockGQLOperations['state'], any, any>[],

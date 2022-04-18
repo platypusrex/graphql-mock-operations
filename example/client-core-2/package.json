@@ -1,5 +1,5 @@
 {
-  "name": "example-client-core-2",
+  "name": "@examples/client-core-2",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

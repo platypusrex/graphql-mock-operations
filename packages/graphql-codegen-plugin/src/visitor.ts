@@ -1,4 +1,14 @@
 import {
+  GraphQLNamedType,
+  GraphQLOutputType,
+  GraphQLSchema,
+  isEnumType,
+  isNonNullType,
+  OperationDefinitionNode,
+  OperationTypeNode,
+  VariableDefinitionNode,
+} from 'graphql';
+import {
   AvoidOptionalsConfig,
   BaseDocumentsVisitor,
   DeclarationBlock,
@@ -13,18 +23,8 @@ import {
   SelectionSetProcessorConfig,
   wrapTypeWithModifiers,
 } from '@graphql-codegen/visitor-plugin-common';
-import {
-  GraphQLNamedType,
-  GraphQLOutputType,
-  GraphQLSchema,
-  isEnumType,
-  isNonNullType,
-  OperationDefinitionNode,
-  OperationTypeNode,
-  VariableDefinitionNode
-} from 'graphql';
-import { SelectionSetToObject } from './set-selection-set-to-object';
 import { TypeScriptDocumentsPluginConfig } from './config';
+import { SelectionSetToObject } from './set-selection-set-to-object';
 import { TypeScriptOperationVariablesToObject } from './ts-operation-variables-to-object';
 import { TypeScriptSelectionSetProcessor } from './ts-selection-set-processor';
 
@@ -54,7 +54,11 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
   TypeScriptDocumentsPluginConfig,
   TypeScriptDocumentsParsedConfig
 > {
-  constructor(schema: GraphQLSchema, config: TypeScriptDocumentsPluginConfig, allFragments: LoadedFragment[]) {
+  constructor(
+    schema: GraphQLSchema,
+    config: TypeScriptDocumentsPluginConfig,
+    allFragments: LoadedFragment[]
+  ) {
     super(
       config,
       {
@@ -86,10 +90,11 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
 
     const formatNamedField = (
       name: string,
-      type: GraphQLOutputType | GraphQLNamedType | null,
+      type: GraphQLNamedType | GraphQLOutputType | null,
       isConditional = false
     ): string => {
-      const optional = isConditional || (!this.config.avoidOptionals.field && !!type && !isNonNullType(type));
+      const optional =
+        isConditional || (!this.config.avoidOptionals.field && !!type && !isNonNullType(type));
       return (this.config.immutableTypes ? `readonly ${name}` : name) + (optional ? '?' : '');
     };
 
@@ -104,9 +109,9 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
       },
       avoidOptionals: this.config.avoidOptionals,
     };
-    const processor = new (preResolveTypes ? PreResolveTypesProcessor : TypeScriptSelectionSetProcessor)(
-      processorConfig
-    );
+    const processor = new (
+      preResolveTypes ? PreResolveTypesProcessor : TypeScriptSelectionSetProcessor
+    )(processorConfig);
 
     this.setSelectionSetHandler(
       new SelectionSetToObject(
@@ -119,7 +124,9 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
         this.config
       ) as any
     );
-    const enumsNames = Object.keys(schema.getTypeMap()).filter(typeName => isEnumType(schema.getType(typeName)));
+    const enumsNames = Object.keys(schema.getTypeMap()).filter((typeName) =>
+      isEnumType(schema.getType(typeName))
+    );
     this.setVariablesTransformer(
       new TypeScriptOperationVariablesToObject(
         this.scalars,
@@ -140,21 +147,22 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
     };
   }
 
-  public getImports = (): Array<string> => {
-    return !this.config.globalNamespace && this.config.inlineFragmentTypes === 'combine'
-      ? this.config.fragmentImports.map(fragmentImport => generateFragmentImportStatement(fragmentImport, 'type'))
+  getImports = (): string[] =>
+    !this.config.globalNamespace && this.config.inlineFragmentTypes === 'combine'
+      ? this.config.fragmentImports.map((fragmentImport) =>
+          generateFragmentImportStatement(fragmentImport, 'type')
+        )
       : [];
-  }
 
-  protected getPunctuation = (_declarationKind: DeclarationKind): string => {
-    return ';';
-  }
+  protected getPunctuation = (_declarationKind: DeclarationKind): string => ';';
 
   protected applyVariablesWrapper = (variablesBlock: string): string => {
     const prefix = this.config.namespacedImportName ? `${this.config.namespacedImportName}.` : '';
 
-    return `${prefix}Exact<${variablesBlock === '{}' ? `{ [key: string]: never; }` : variablesBlock}>`;
-  }
+    return `${prefix}Exact<${
+      variablesBlock === '{}' ? `{ [key: string]: never; }` : variablesBlock
+    }>`;
+  };
 
   private internalHandleAnonymousOperation = (node: OperationDefinitionNode): string => {
     const name = node.name && node.name.value;
@@ -166,13 +174,13 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
       });
     }
 
-    return this.convertName(this._unnamedCounter++ + '', {
+    return this.convertName(`${this._unnamedCounter++}`, {
       prefix: 'Unnamed_',
       suffix: '_',
       useTypesPrefix: false,
       useTypesSuffix: false,
     });
-  }
+  };
 
   private getOperationArgsDefinition = (
     node: OperationDefinitionNode,
@@ -183,21 +191,21 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
       node.variableDefinitions!
     );
     const operationArgsString = this.convertName(name, {
-      suffix: suffix + 'Args',
+      suffix: `${suffix}Args`,
     });
 
     return {
       name: operationArgsString,
       result: new DeclarationBlock({
         ...this._declarationBlockConfig,
-        blockTransformer: t => this.applyVariablesWrapper(t),
+        blockTransformer: (t) => this.applyVariablesWrapper(t),
       })
         .export()
         .asKind('type')
         .withName(operationArgsString)
-        .withBlock(visitedOperationVariables).string
-    }
-  }
+        .withBlock(visitedOperationVariables).string,
+    };
+  };
 
   private getOperationResultDefinition = (
     selectionSetObject: SelectionSetObject,
@@ -205,18 +213,20 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
     suffix: string
   ) => {
     const operationResultName = this.convertName(name, {
-      suffix: suffix + 'Result',
-    })
-    const operationResultString = `\t${selectionSetObject.name.replace('?', '')}: ${selectionSetObject.type}`;
+      suffix: `${suffix}Result`,
+    });
+    const operationResultString = `\t${selectionSetObject.name.replace('?', '')}: ${
+      selectionSetObject.type
+    }`;
     return {
       name: operationResultName,
       result: new DeclarationBlock(this._declarationBlockConfig)
         .export()
         .asKind('type')
         .withName(operationResultName)
-        .withBlock(operationResultString).string
-    }
-  }
+        .withBlock(operationResultString).string,
+    };
+  };
 
   getOperationFunctionDefinition = (
     selectionSetObject: SelectionSetObject,
@@ -224,7 +234,7 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
     type: string,
     args: string
   ) => {
-    const content = `ResolverType<${type}, ${args}>`
+    const content = `ResolverType<${type}, ${args}>`;
     const operationFunctionName = this.convertName(name, {
       suffix: 'MockOperation',
     });
@@ -237,15 +247,15 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
         .export()
         .asKind('type')
         .withName(operationFunctionName)
-        .withContent(content).string
-    }
-  }
+        .withContent(content).string,
+    };
+  };
 
   getCombinedOperationsDefinition = (operations: { kind: string; name: string }[]) => {
-    const queryOperations = operations.filter(op => op.kind === 'Query');
-    const mutationOperations = operations.filter(op => op.kind === 'Mutation');
-    const queryContent = queryOperations.map(op => op.name).join('\n\t & ')
-    const mutationContent = mutationOperations.map(op => op.name).join('\n\t & ' )
+    const queryOperations = operations.filter((op) => op.kind === 'Query');
+    const mutationOperations = operations.filter((op) => op.kind === 'Mutation');
+    const queryContent = queryOperations.map((op) => op.name).join('\n\t & ');
+    const mutationContent = mutationOperations.map((op) => op.name).join('\n\t & ');
     const queryDefinitions = new DeclarationBlock(this._declarationBlockConfig)
       .export()
       .asKind('type')
@@ -257,18 +267,19 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
       .withName('MutationMockOperations')
       .withContent(mutationContent).string;
 
-    const combinedQueryContent = '{\n\tQuery: Partial<QueryMockOperations>;\n\tMutation: Partial<MutationMockOperations>;\n}';
+    const combinedQueryContent =
+      '{\n\tQuery: Partial<QueryMockOperations>;\n\tMutation: Partial<MutationMockOperations>;\n}';
     const combinedDefinitions = new DeclarationBlock(this._declarationBlockConfig)
       .export()
       .asKind('type')
       .withName('MockOperations')
       .withContent(combinedQueryContent).string;
 
-    return [queryDefinitions, mutationDefinitions, combinedDefinitions]
-  }
+    return [queryDefinitions, mutationDefinitions, combinedDefinitions];
+  };
 
-  getOperationDefinition = (nodes: OperationDefinitionNode[]) => {
-    return nodes.map(node => {
+  getOperationDefinition = (nodes: OperationDefinitionNode[]) =>
+    nodes.map((node) => {
       const operationRootType = getRootType(node.operation, this._schema);
 
       if (!operationRootType) {
@@ -281,15 +292,16 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
       ) as SelectionSetToObject;
       const { transformedSelectionSets } = selectionSet.transformGroupedSelections();
 
-      const selectionSetObject = (transformedSelectionSets as NameAndType[])?.reduce<SelectionSetObject>(
-        (acc, curr) => {
+      const selectionSetObject = (
+        transformedSelectionSets as NameAndType[]
+      )?.reduce<SelectionSetObject>((acc, curr) => {
         let currentKey: keyof NameAndType | 'operationKind';
         let currentValue;
         for (const key in curr) {
           const k = key as keyof NameAndType;
           if (curr[k] === "'Query'" || curr[k] === "'Mutation'") {
             currentKey = 'operationKind';
-            currentValue = curr[k].replace(/'/g,'');
+            currentValue = curr[k].replace(/'/g, '');
           } else {
             currentKey = k;
             currentValue = curr[k];
@@ -300,19 +312,31 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
           }
         }
         return acc;
-      }, {} as SelectionSetObject)
+      }, {});
 
       const name = this.internalHandleAnonymousOperation(node);
       const defaultSuffix = 'MockOperation';
 
-      const { name: args, result: argsResult } = this.getOperationArgsDefinition(node, name, defaultSuffix);
-      const { name: type, result: typeResult } = this.getOperationResultDefinition(selectionSetObject, name, defaultSuffix);
-      const { result: operationFunction, operation } = this.getOperationFunctionDefinition(selectionSetObject, name, type, args);
+      const { name: args, result: argsResult } = this.getOperationArgsDefinition(
+        node,
+        name,
+        defaultSuffix
+      );
+      const { name: type, result: typeResult } = this.getOperationResultDefinition(
+        selectionSetObject,
+        name,
+        defaultSuffix
+      );
+      const { result: operationFunction, operation } = this.getOperationFunctionDefinition(
+        selectionSetObject,
+        name,
+        type,
+        args
+      );
 
       return {
         operation,
-        definition: [argsResult, typeResult, operationFunction].join('\n')
+        definition: [argsResult, typeResult, operationFunction].join('\n'),
       };
     });
-  }
 }

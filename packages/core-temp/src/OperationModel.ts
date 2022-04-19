@@ -1,7 +1,17 @@
 import deepmerge from 'deepmerge';
-import { GraphQLErrors, NetworkError, NonEmptyArray, OperationLoading, OperationType } from './types';
+import {
+  GraphQLErrors,
+  NetworkError,
+  NonEmptyArray,
+  OperationLoading,
+  OperationType,
+} from './types';
 
-export type ResolverReturn<T> = T extends GraphQLErrors | NetworkError | Promise<any> | OperationLoading
+export type ResolverReturn<T> = T extends
+  | GraphQLErrors
+  | NetworkError
+  | OperationLoading
+  | Promise<any>
   ? never
   : NonNullable<T>;
 
@@ -20,18 +30,14 @@ export class OperationModel<TModel extends OperationType<any, any>> {
     value: ResolverReturn<ReturnType<TModel[keyof TModel]>>[keyof ResolverReturn<
       ReturnType<TModel[keyof TModel]>
     >]
-  ) => {
-    return this._models.find((model) => model[key] === value) ?? null;
-  };
+  ) => this._models.find((model) => model[key] === value) ?? null;
 
   findFirst = () => {
     const [firstModel] = this._models;
     return firstModel;
   };
 
-  findLast = () => {
-    return this._models[this._models.length - 1];
-  };
+  findLast = () => this._models[this._models.length - 1];
 
   create = (model: ResolverReturn<ReturnType<TModel[keyof TModel]>>) => {
     this._models = [...this._models, model];
@@ -46,10 +52,12 @@ export class OperationModel<TModel extends OperationType<any, any>> {
     data: Partial<ResolverReturn<ReturnType<TModel[keyof TModel]>>>
   ) => {
     const models = this._models.filter((model) => model[key] === value);
-    if (models.length > 1){
-      console.warn('update model: more than one model found. Please provide a unique key/value pair for improved results.');
+    if (models.length > 1) {
+      console.warn(
+        'update model: more than one model found. Please provide a unique key/value pair for improved results.'
+      );
     }
-    if (!models.length) {
+    if (models.length === 0) {
       throw new Error('update model: model not found. Please provide a unique key/value pair.');
     }
     let model = models[0];

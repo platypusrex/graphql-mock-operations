@@ -47,9 +47,7 @@ export function createMockLink(
           if (originalError) {
             const { graphQLErrors, networkError } = originalError ?? {};
             graphQLErrors.length && observer.next({ errors: result?.errors });
-            networkError
-              ? observer.error(networkError)
-              : observer.error(originalError.message);
+            networkError ? observer.error(networkError) : observer.error(originalError.message);
           } else {
             observer.next(result);
           }

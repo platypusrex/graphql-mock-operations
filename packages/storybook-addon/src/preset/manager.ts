@@ -7,6 +7,6 @@ addons.register(ADDON_ID, () => {
     type: types.PANEL,
     title: 'Apollo Operations',
     paramKey: PARAM_KEY,
-    render: Panel
+    render: Panel,
   });
 });

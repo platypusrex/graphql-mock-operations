@@ -34,18 +34,14 @@ export const Panel = ({ active = false, key }: RenderOptions): React.ReactElemen
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const currentIdx = Number(e.currentTarget.value);
     setActiveCardIndex(currentIdx);
-  }
+  };
 
   return (
     <AddonPanel key={key} active={active}>
       {operationMeta && operationMeta?.length > 0 && (
         <PanelContainer>
           <Form.Field label="Operations">
-            <Form.Select
-              size="auto"
-              value={activeCardIndex}
-              onChange={handleSelectChange}
-            >
+            <Form.Select size="auto" value={activeCardIndex} onChange={handleSelectChange}>
               {operationMeta.map(({ operationName, operationCount }, i) => (
                 <option key={operationName + i} value={i}>
                   {i + 1}. {operationName} {operationCount ? `(${operationCount})` : ''}
@@ -80,5 +76,5 @@ export const Panel = ({ active = false, key }: RenderOptions): React.ReactElemen
         </PanelContainer>
       )}
     </AddonPanel>
-  )
-}
+  );
+};

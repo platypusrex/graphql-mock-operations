@@ -10,10 +10,7 @@ import { CreateUserMutation, CreateUserMutationVariables } from '../typings/gene
 
 const CreateUser = loader('../gql/createUserMutation.graphql');
 
-type UseCreateUserOptions = BaseMutationOptions<
-  CreateUserMutation,
-  CreateUserMutationVariables
->;
+type UseCreateUserOptions = BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 
 type UseCreateUser = MutationResult<CreateUserMutation> & {
   createUser: (
@@ -22,9 +19,9 @@ type UseCreateUser = MutationResult<CreateUserMutation> & {
 };
 
 export const useCreateUser = (options: UseCreateUserOptions = {}): UseCreateUser => {
-  const [createUser, rest] = useMutation<
-    CreateUserMutation,
-    CreateUserMutationVariables
-  >(CreateUser, options);
+  const [createUser, rest] = useMutation<CreateUserMutation, CreateUserMutationVariables>(
+    CreateUser,
+    options
+  );
   return { createUser, ...rest };
-}
+};

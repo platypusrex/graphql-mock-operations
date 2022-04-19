@@ -1,16 +1,16 @@
+import { GraphQLInterfaceType, GraphQLObjectType } from 'graphql';
 import {
   BaseSelectionSetProcessor,
-  ProcessResult,
   LinkField,
   PrimitiveAliasedFields,
-  SelectionSetProcessorConfig,
   PrimitiveField,
+  ProcessResult,
+  SelectionSetProcessorConfig,
 } from '@graphql-codegen/visitor-plugin-common';
-import { GraphQLObjectType, GraphQLInterfaceType } from 'graphql';
 
 export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<SelectionSetProcessorConfig> {
   transformPrimitiveFields(
-    schemaType: GraphQLObjectType | GraphQLInterfaceType,
+    schemaType: GraphQLInterfaceType | GraphQLObjectType,
     fields: PrimitiveField[]
   ): ProcessResult {
     if (fields.length === 0) {
@@ -26,7 +26,7 @@ export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<S
     let hasConditionals = false;
     const conditilnalsList: string[] = [];
     let resString = `Pick<${parentName}, ${fields
-      .map(field => {
+      .map((field) => {
         if (field.isConditional) {
           hasConditionals = true;
           conditilnalsList.push(field.fieldName);
@@ -45,7 +45,7 @@ export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<S
       const transform = avoidOptional ? 'MakeMaybe' : 'MakeOptional';
       resString = `${
         this.config.namespacedImportName ? `${this.config.namespacedImportName}.` : ''
-      }${transform}<${resString}, ${conditilnalsList.map(field => `'${field}'`).join(' | ')}>`;
+      }${transform}<${resString}, ${conditilnalsList.map((field) => `'${field}'`).join(' | ')}>`;
     }
     return [resString];
   }
@@ -55,7 +55,7 @@ export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<S
   }
 
   transformAliasesPrimitiveFields(
-    schemaType: GraphQLObjectType | GraphQLInterfaceType,
+    schemaType: GraphQLInterfaceType | GraphQLObjectType,
     fields: PrimitiveAliasedFields[]
   ): ProcessResult {
     if (fields.length === 0) {
@@ -70,7 +70,7 @@ export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<S
 
     return [
       `{ ${fields
-        .map(aliasedField => {
+        .map((aliasedField) => {
           const value =
             aliasedField.fieldName === '__typename'
               ? `'${schemaType.name}'`
@@ -86,6 +86,10 @@ export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<S
       return [];
     }
 
-    return [`{ ${fields.map(field => `${field.alias || field.name}: ${field.selectionSet}`).join(', ')} }`];
+    return [
+      `{ ${fields
+        .map((field) => `${field.alias || field.name}: ${field.selectionSet}`)
+        .join(', ')} }`,
+    ];
   }
 }

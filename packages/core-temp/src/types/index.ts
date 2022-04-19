@@ -10,6 +10,8 @@ import {
 } from '@apollo/client';
 import { OperationModel } from '../OperationModel';
 
+export type AnyObject<T = any> = Record<string, T>;
+
 export type RequireAtLeastOne<T> = {
   [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>;
 }[keyof T];
@@ -52,7 +54,7 @@ type CacheOptions = Omit<InMemoryCacheConfig, 'addTypename'>;
 export interface MockProviderProps<TOperationState extends OperationState<any, any>> {
   loading?: boolean;
   operationState?: RequireAtLeastOne<TOperationState['state']>;
-  mergeOperations?: RequireAtLeastOne<TOperationState['operation']>
+  mergeOperations?: RequireAtLeastOne<TOperationState['operation']>;
   delay?: number;
   cacheOptions?: CacheOptions;
   clientOptions?: ClientOptions;

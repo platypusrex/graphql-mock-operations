@@ -7,4 +7,4 @@ const Books = loader('../gql/booksQuery.graphql');
 export const useBook = () => {
   const { data, ...rest } = useQuery<BooksQuery, BooksQueryVariables>(Books);
   return { book: data?.books, ...rest };
-}
+};

@@ -16,16 +16,16 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
         query: usersQuery,
       });
 
-      const users = currentUsers?.users
+      const users = currentUsers?.users;
       if (!users) return;
 
       cache.writeQuery<UsersQuery>({
         query: usersQuery,
         data: {
-          users: users.filter(user => user.id !== result.id),
+          users: users.filter((user) => user.id !== result.id),
         },
       });
-    }
+    },
   });
 
   const handleDeleteUser = async () => {
@@ -38,13 +38,9 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
     <div key={user.id} className="user-card">
       <h3>User name: {user.name}</h3>
       <pre className="Users-code-block">
-        <code>
-          {JSON.stringify(user, null, 2)}
-        </code>
+        <code>{JSON.stringify(user, null, 2)}</code>
       </pre>
-      <button onClick={handleDeleteUser}>
-        {loading ? 'Loading...' : `Delete ${user.name}`}
-      </button>
+      <button onClick={handleDeleteUser}>{loading ? 'Loading...' : `Delete ${user.name}`}</button>
     </div>
-  )
-}
+  );
+};

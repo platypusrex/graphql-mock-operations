@@ -3,7 +3,7 @@ import { ComponentStory } from '@storybook/react';
 
 type ReactComponentProps = keyof JSX.IntrinsicElements | JSXElementConstructor<any>;
 interface ApolloStoryParameters<TProviderProps extends ReactComponentProps> {
-  apolloClient: Omit<ComponentProps<TProviderProps>, 'children'>
+  apolloClient: Omit<ComponentProps<TProviderProps>, 'children'>;
 }
 
 export interface StoryWithApollo<

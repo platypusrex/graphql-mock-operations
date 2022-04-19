@@ -42,9 +42,7 @@ export default {
 } as ComponentMeta<typeof Users>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: StoryWithApollo<typeof MockApolloProvider, typeof Users> = () => (
-  <Users />
-);
+const Template: StoryWithApollo<typeof MockApolloProvider, typeof Users> = () => <Users />;
 
 export const Primary = Template.bind({});
 Primary.args = {

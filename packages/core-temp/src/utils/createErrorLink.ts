@@ -3,9 +3,7 @@ import { ApolloLink, Observable } from '@apollo/client';
 import { delay } from './delay';
 import { createGraphQLErrorMessage } from './createGraphQLErrorMessage';
 
-export function createErrorLink(
-  graphQLError?: string | GraphQLError[]
-): ApolloLink {
+export function createErrorLink(graphQLError?: string | GraphQLError[]): ApolloLink {
   return new ApolloLink(() => {
     return new Observable((observer) => {
       delay(100)

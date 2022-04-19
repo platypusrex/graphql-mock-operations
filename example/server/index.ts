@@ -20,7 +20,7 @@ const typeDefs = gql`
     state: String!
     zip: String!
   }
-  
+
   type User {
     id: ID!
     name: String!
@@ -41,7 +41,7 @@ const typeDefs = gql`
     name: String!
     email: String!
   }
-  
+
   input CreateBookInput {
     title: String!
     numPages: Int!
@@ -73,28 +73,28 @@ const resolvers = {
   Mutation: {
     createUser: (_: any, { input: { name, email } }: any) => {
       const newUser = { id: String(users.length + 1), name, email };
-      users = [...users, newUser]
+      users = [...users, newUser];
       return newUser;
     },
     deleteUser: (_: any, { id }: any) => {
-      const userToDelete = users.find(user => user.id === id);
-      users = users.filter(user => user.id !== id)
+      const userToDelete = users.find((user) => user.id === id);
+      users = users.filter((user) => user.id !== id);
       return userToDelete;
     },
     createBook: (_: any, { input: { title, numPages, authorId } }: any) => {
       const newBook = { id: String(books.length + 1), title, numPages, authorId };
-      books = [...books, newBook]
+      books = [...books, newBook];
       return newBook;
     },
     deleteBook: (_: any, { id }: any) => {
-      const bookToDelete = books.find(book => book.id === id);
-      books = books.filter(book => book.id !== id)
+      const bookToDelete = books.find((book) => book.id === id);
+      books = books.filter((book) => book.id !== id);
       return bookToDelete;
-    }
-  }
+    },
+  },
 };
 
-(function() {
+(function () {
   const server = new ApolloServer({
     typeDefs: typeDefs as any,
     resolvers,

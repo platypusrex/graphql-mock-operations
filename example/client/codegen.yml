@@ -5,7 +5,7 @@ generates:
     plugins:
       - typescript
       - typescript-operations
-      - "@graphql-mock-operations/codegen-plugin"
+      - '@graphql-mock-operations/codegen-plugin'
   introspection.json:
     plugins:
       - introspection

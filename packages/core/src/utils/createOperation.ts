@@ -21,8 +21,12 @@ type CreateOperationState<TMockOperation extends OperationType<any, any>, TOpera
       args: Parameters<TMockOperation[keyof TMockOperation]>[1],
       context: Parameters<TMockOperation[keyof TMockOperation]>[2],
       info: Parameters<TMockOperation[keyof TMockOperation]>[3]
-    ) => NonEmptyStateObject<OperationStateObject<TOperationState, ReturnType<TMockOperation[keyof TMockOperation]>>>)
-  | NonEmptyStateObject<OperationStateObject<TOperationState, ReturnType<TMockOperation[keyof TMockOperation]>>>;
+    ) => NonEmptyStateObject<
+      OperationStateObject<TOperationState, ReturnType<TMockOperation[keyof TMockOperation]>>
+    >)
+  | NonEmptyStateObject<
+      OperationStateObject<TOperationState, ReturnType<TMockOperation[keyof TMockOperation]>>
+    >;
 
 export const createOperation =
   <

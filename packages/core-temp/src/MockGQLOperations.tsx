@@ -1,17 +1,12 @@
 import * as React from 'react';
-import { mergeResolvers } from '@graphql-tools/merge';
-import { IResolvers } from '@graphql-tools/utils';
 import { IntrospectionQuery } from 'graphql';
 import { IntrospectionObjectType } from 'graphql/utilities/getIntrospectionQuery';
 import { ApolloError, ApolloProvider } from '@apollo/client';
+import { mergeResolvers } from '@graphql-tools/merge';
+import { IResolvers } from '@graphql-tools/utils';
+import { OperationModel, ResolverReturn } from './OperationModel';
 import {
-  CreateApolloClient,
-  createApolloClient,
-  createLoadingApolloClient,
-  generateOperationLoadingError,
-} from './utils';
-import { ResolverReturn, OperationModel } from './OperationModel';
-import {
+  AnyObject,
   CreateOperationState,
   MockProviderProps,
   NonEmptyArray,
@@ -20,6 +15,12 @@ import {
   OperationType,
   ProtectedMockedProviderProps,
 } from './types';
+import {
+  CreateApolloClient,
+  createApolloClient,
+  createLoadingApolloClient,
+  generateOperationLoadingError,
+} from './utils';
 
 interface MockGQLOperationsCreate<TQueryOperations, TMutationOperations> {
   Query: TQueryOperations;
@@ -28,8 +29,8 @@ interface MockGQLOperationsCreate<TQueryOperations, TMutationOperations> {
 
 interface MockGQLOperationType<TOperationState> {
   operations?: {
-    query: OperationFn<TOperationState, any, any>[];
-    mutation?: OperationFn<TOperationState, any, any>[];
+    query: OperationFn<TOperationState, AnyObject, AnyObject>[];
+    mutation?: OperationFn<TOperationState, AnyObject, AnyObject>[];
   };
 }
 
@@ -37,13 +38,13 @@ interface MockGQLOperationsConfig {
   introspectionResult: IntrospectionQuery | any;
 }
 
-export type MockGQLOperationsType<
+export interface MockGQLOperationsType<
   TOperationState extends Record<'state', OperationState<any, any>>,
   TModels extends Record<'models', OperationModel<any>>
-> = {
+> {
   state: TOperationState;
   models?: TModels;
-};
+}
 
 export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<any, any>> {
   private readonly introspectionResult: MockGQLOperationsConfig['introspectionResult'];
@@ -181,7 +182,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
         ? this.mergeOperations(mergeOperations)
         : this.createOperations(operationState),
       introspectionResult: this.introspectionResult,
-      delay: delay,
+      delay,
       onResolved,
     },
     ...rest,
@@ -192,7 +193,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
     state?: TMockGQLOperations['state']
   ): MockGQLOperationsCreate<any, any> => {
     const defaultState = (state ?? {}) as TMockGQLOperations['state'];
-    return operations.reduce((operationObj, operation) => {
+    return operations.reduce<MockGQLOperationsCreate<any, any>>((operationObj, operation) => {
       const key = Object.keys(
         operation({} as TMockGQLOperations['state'])
       )[0] as keyof TMockGQLOperations['state'];
@@ -201,24 +202,23 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
         operationState as unknown as TMockGQLOperations['state']
       )[key];
       return operationObj;
-    }, {} as MockGQLOperationsCreate<any, any>);
+    }, {});
   };
 
   private generateResolverKey = (key: keyof MockGQLOperationType<any>['operations']): string =>
     (key as any).charAt(0).toUpperCase() + (key as any).slice(1);
 
-  private createOperations = (state?: TMockGQLOperations['state']): IResolvers => {
-    return [this._operations ?? []].reduce((operationObj, operation) => {
+  private createOperations = (state?: TMockGQLOperations['state']): IResolvers =>
+    [this._operations ?? []].reduce<IResolvers>((operationObj, operation) => {
       const keys = Object.keys(operation);
-      for (const key of keys as Array<keyof typeof operation>) {
+      for (const key of keys as (keyof typeof operation)[]) {
         operationObj[this.generateResolverKey(key)] = this.mapOperations(
           this._operations?.[key] ?? [],
           state
         );
       }
       return operationObj;
-    }, {} as IResolvers);
-  };
+    }, {});
 
   private mergeOperations(
     operations: Partial<TMockGQLOperations['state']['operation']>,
@@ -228,22 +228,22 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       this.introspectionResult as IntrospectionQuery
     ).__schema.types.filter((type) => type.name === 'Mutation' || type.name === 'Query');
 
-    const customOperations = Object.keys(operations).reduce((acc, operationName) => {
-      const resolverRootKey = rootResolverTypes.find((resolverType) => {
-        return (resolverType as IntrospectionObjectType).fields.find((field) => {
-          return field.name === operationName;
-        });
-      })?.name;
+    const customOperations = Object.keys(operations).reduce<IResolvers>((acc, operationName) => {
+      const resolverRootKey = rootResolverTypes.find((resolverType) =>
+        (resolverType as IntrospectionObjectType).fields.find(
+          (field) => field.name === operationName
+        )
+      )?.name;
 
       if (resolverRootKey) {
-        // @ts-ignore
+        // @ts-expect-error
         acc[resolverRootKey] = {
           ...acc[resolverRootKey],
           [operationName]: operations?.[operationName],
         };
       }
       return acc;
-    }, {} as IResolvers);
+    }, {});
 
     const defaultOperations = this.createOperations(operationState);
 

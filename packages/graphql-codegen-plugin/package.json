@@ -1,21 +1,21 @@
 {
   "name": "@graphql-mock-operations/codegen-plugin",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "author": "Frank Cooke",
   "license": "MIT",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build:temp": "tsc --project tsconfig.json",
-    "build:cjs": "tsc --module commonjs --target es5 --outDir dist/cjs",
-    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/types --project tsconfig.json",
     "build:tsc:cjs": "tsc --module commonjs --outDir dist --project tsconfig.json",
     "build:tsc:esm": "tsc --module esnext --outDir dist/esm --project tsconfig.json",
-    "build": "yarn clean && concurrently \"yarn build:tsc:cjs\" \"yarn build:tsc:esm\"",
+    "build:cjs": "swc src -d dist/cjs --config-file ../../.swcrc -C module.type=commonjs",
+    "build:esm": "swc src -d dist/esm --config-file ../../.swcrc -C module.type=es6",
+    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/types --project tsconfig.json",
+    "build": "yarn clean && concurrently \"yarn build:cjs\" \"yarn build:esm\" \"yarn build:ts\"",
     "clean": "npx rimraf dist"
   },
   "devDependencies": {

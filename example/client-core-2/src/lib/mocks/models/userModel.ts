@@ -1,6 +1,6 @@
 import { mockBuilder } from '../builder';
 import { UserMockOperation } from '../../../typings/generated';
-import { OperationModelType } from '@graphql-mock-operations/core-temp/dist/types';
+import { OperationModelType } from '@graphql-mock-operations/core-temp';
 
 export type UserModel = OperationModelType<UserMockOperation>;
 

@@ -1,4 +1,4 @@
-import { OperationState } from '@graphql-mock-operations/core-temp/dist/types';
+import { OperationState } from '@graphql-mock-operations/core-temp';
 import { BookMockOperation } from '../../../typings/generated';
 import { mockBuilder } from '../builder';
 

@@ -1,5 +1,5 @@
 import { mockBuilder } from '../builder';
-import { OperationState } from '@graphql-mock-operations/core-temp/dist/types';
+import { OperationState } from '@graphql-mock-operations/core-temp';
 import { CreateUserMockOperation } from '../../../typings/generated';
 
 export type CreateUserOperationState = OperationState<CreateUserMockOperation, 'SUCCESS'>;

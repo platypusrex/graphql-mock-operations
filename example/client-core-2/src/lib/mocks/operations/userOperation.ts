@@ -1,5 +1,5 @@
 import { mockBuilder } from '../builder';
-import { OperationState } from '@graphql-mock-operations/core-temp/dist/types';
+import { OperationState } from '@graphql-mock-operations/core-temp';
 import { UserMockOperation } from '../../../typings/generated';
 import { GraphQLError } from 'graphql';
 

@@ -1,15 +1,19 @@
 {
   "name": "@graphql-mock-operations/core-temp",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
   "author": "Frank Cooke",
   "license": "MIT",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build:cjs": "swc src -d dist/cjs --config-file ../../.swcrc -C module.type=commonjs",
+    "build:esm": "swc src -d dist/esm --config-file ../../.swcrc -C module.type=es6",
+    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/types --project tsconfig.json",
+    "build": "yarn clean && concurrently \"yarn build:cjs\" \"yarn build:esm\" \"yarn build:ts\"",
     "clean": "npx rimraf dist"
   },
   "devDependencies": {

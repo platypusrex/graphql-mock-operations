@@ -6,7 +6,7 @@ import {
   ApolloLink,
   InMemoryCache,
   InMemoryCacheConfig,
-  NormalizedCacheObject
+  NormalizedCacheObject,
 } from '@apollo/client';
 import { createMockLink } from './createMockLink';
 import { CreateLinkOptions, LinkSchemaProps } from '../types';
@@ -24,14 +24,7 @@ export function createApolloClient({
   clientOptions = {} as any,
   links = () => [],
 }: CreateApolloClient) {
-  const {
-    resolvers,
-    introspectionResult,
-    rootValue,
-    context,
-    delay,
-    onResolved,
-  } = mocks;
+  const { resolvers, introspectionResult, rootValue, context, delay, onResolved } = mocks;
 
   const schema = buildClientSchema(introspectionResult);
 

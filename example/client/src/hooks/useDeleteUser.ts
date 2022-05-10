@@ -8,10 +8,7 @@ import {
 import { DeleteUserMutation, DeleteUserMutationVariables } from '../typings/generated';
 import { deleteUserMutation } from '../gql';
 
-type UseDeleteUserOptions = BaseMutationOptions<
-  DeleteUserMutation,
-  DeleteUserMutationVariables
->;
+type UseDeleteUserOptions = BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
 
 type UseDeleteUser = MutationResult<DeleteUserMutation> & {
   deleteUser: (
@@ -20,9 +17,9 @@ type UseDeleteUser = MutationResult<DeleteUserMutation> & {
 };
 
 export const useDeleteUser = (options: UseDeleteUserOptions = {}): UseDeleteUser => {
-  const [deleteUser, rest] = useMutation<
-    DeleteUserMutation,
-    DeleteUserMutationVariables
-    >(deleteUserMutation, options);
+  const [deleteUser, rest] = useMutation<DeleteUserMutation, DeleteUserMutationVariables>(
+    deleteUserMutation,
+    options
+  );
   return { deleteUser, ...rest };
-}
+};

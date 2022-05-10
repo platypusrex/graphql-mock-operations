@@ -4,7 +4,7 @@ import { Users } from '../routes/Users';
 // import { GraphQLError, GraphQLFormattedError } from 'graphql';
 // import { ApolloError } from '@apollo/client';
 import { MockApolloProvider } from '../lib/operations';
-import { StoryWithApollo } from '@graphql-mock-operations/storybook-addon/dist/types';
+import { StoryWithApollo } from '@graphql-mock-operations/storybook-addon';
 
 // const GRAPHQL_ERROR: GraphQLError = {
 //   stack: '',
@@ -42,9 +42,8 @@ export default {
 } as ComponentMeta<typeof Users>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: StoryWithApollo<typeof MockApolloProvider, typeof Users> = () => (
-  <Users />
-);
+// @ts-ignore
+const Template: StoryWithApollo<typeof MockApolloProvider, typeof Users> = () => <Users />;
 
 export const Primary = Template.bind({});
 Primary.args = {

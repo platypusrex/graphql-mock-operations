@@ -30,9 +30,11 @@ export class MockGQLResolvers<TQueryResolvers, TMutationResolvers, TResolverStat
     TMutationResolvers,
     TResolverState
   >['resolvers'];
-  constructor({
-    resolvers,
-  }: MockGQLResolverConfig<TQueryResolvers, TMutationResolvers, TResolverState> = { resolvers: { query: [], mutation: [] } } ) {
+  constructor(
+    { resolvers }: MockGQLResolverConfig<TQueryResolvers, TMutationResolvers, TResolverState> = {
+      resolvers: { query: [], mutation: [] },
+    }
+  ) {
     this.resolvers = resolvers;
   }
 
@@ -70,7 +72,10 @@ export class MockGQLResolvers<TQueryResolvers, TMutationResolvers, TResolverStat
     const customResolvers = [query, mutation].reduce((root, resolvers, i) => {
       if (Object.keys(resolvers || {}).length) {
         const res = i === 0 ? Query : Mutation;
-        (root as any)[i === 0 ? 'Query' : 'Mutation'] = () => ({ ...(res ? res() : {}), ...resolvers });
+        (root as any)[i === 0 ? 'Query' : 'Mutation'] = () => ({
+          ...(res ? res() : {}),
+          ...resolvers,
+        });
       }
       return root;
     }, {});

@@ -20,7 +20,7 @@ interface CreateUserFormValues {
 const initialFormState: CreateUserFormValues = {
   name: '',
   email: '',
-}
+};
 
 export const Users: React.FC<UsersProps> = () => {
   const { values, onChange, reset } = useForm<CreateUserFormValues>(initialFormState);
@@ -40,16 +40,16 @@ export const Users: React.FC<UsersProps> = () => {
         query: usersQuery,
       });
 
-      const users = currentUsers?.users
+      const users = currentUsers?.users;
       if (!users) return;
 
       cache.writeQuery<UsersQuery>({
         query: usersQuery,
         data: {
-          users: [...users, result]
+          users: [...users, result],
         },
       });
-    }
+    },
   });
 
   const handleSubmit = async (e: FormEvent) => {
@@ -59,18 +59,25 @@ export const Users: React.FC<UsersProps> = () => {
         input: { name: values.name, email: values.email },
       },
     });
-  }
+  };
 
   if (loading) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          height: '100vh',
+          display: 'flex',
+          alignContent: 'center',
+          justifyContent: 'center',
+        }}
+      >
         Loading...
       </div>
-    )
+    );
   }
 
   if (error) {
-    return <div>{JSON.stringify(error, null, 2)}</div>
+    return <div>{JSON.stringify(error, null, 2)}</div>;
   }
 
   return (
@@ -78,34 +85,18 @@ export const Users: React.FC<UsersProps> = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-control">
           <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            value={values.name}
-            onChange={onChange}
-          />
+          <input id="name" name="name" type="text" value={values.name} onChange={onChange} />
         </div>
         <div className="form-control">
           <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="text"
-            value={values.email}
-            onChange={onChange}
-          />
+          <input id="email" name="email" type="text" value={values.email} onChange={onChange} />
         </div>
-        <button type="submit">
-          {submitting ? 'Loading...' : 'Create user'}
-        </button>
+        <button type="submit">{submitting ? 'Loading...' : 'Create user'}</button>
       </form>
       {users?.length > 0 && users.map((user: any) => <UserCard key={user.id} user={user} />)}
       <pre className="Users-code-block">
-        <code>
-          {JSON.stringify(book, null, 2)}
-        </code>
+        <code>{JSON.stringify(book, null, 2)}</code>
       </pre>
     </div>
   );
-}
+};

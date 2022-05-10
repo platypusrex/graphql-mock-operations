@@ -19,7 +19,7 @@ interface CreateUserFormValues {
 const initialFormState: CreateUserFormValues = {
   name: '',
   email: '',
-}
+};
 
 export const Users: React.FC<UsersProps> = () => {
   const { values, onChange, reset } = useForm<CreateUserFormValues>(initialFormState);
@@ -39,16 +39,16 @@ export const Users: React.FC<UsersProps> = () => {
         query: usersQuery,
       });
 
-      const users = currentUsers?.users
+      const users = currentUsers?.users;
       if (!users) return;
 
       cache.writeQuery<UsersQuery>({
         query: usersQuery,
         data: {
-          users: [...users, result]
+          users: [...users, result],
         },
       });
-    }
+    },
   });
 
   const handleSubmit = async (e: FormEvent) => {
@@ -58,7 +58,7 @@ export const Users: React.FC<UsersProps> = () => {
         input: { name: values.name, email: values.email },
       },
     });
-  }
+  };
 
   if (error?.graphQLErrors.length) {
     return <div>Graphql error: {error.graphQLErrors[0].message}</div>;
@@ -73,7 +73,11 @@ export const Users: React.FC<UsersProps> = () => {
       Loading users...
     </div>
   ) : (
-    <>{users?.map((user: any) => <UserCard key={user.id} user={user} />)}</>
+    <>
+      {users?.map((user: any) => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </>
   );
 
   const bookContent = bookLoading ? (
@@ -83,41 +87,25 @@ export const Users: React.FC<UsersProps> = () => {
   ) : (
     <pre className="Users-code-block">
       <h3>Title: {book?.title}</h3>
-      <code>
-        {JSON.stringify(book, null, 2)}
-      </code>
+      <code>{JSON.stringify(book, null, 2)}</code>
     </pre>
-  )
+  );
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <div className="form-control">
           <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            value={values.name}
-            onChange={onChange}
-          />
+          <input id="name" name="name" type="text" value={values.name} onChange={onChange} />
         </div>
         <div className="form-control">
           <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="text"
-            value={values.email}
-            onChange={onChange}
-          />
+          <input id="email" name="email" type="text" value={values.email} onChange={onChange} />
         </div>
-        <button type="submit">
-          {submitting ? 'Loading...' : 'Create user'}
-        </button>
+        <button type="submit">{submitting ? 'Loading...' : 'Create user'}</button>
       </form>
       {usersList}
       {bookContent}
     </div>
   );
-}
+};

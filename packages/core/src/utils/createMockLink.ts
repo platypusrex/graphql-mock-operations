@@ -22,22 +22,25 @@ export function createMockLink(
             rootValue,
             contextValue: context,
             variableValues: variables,
-            operationName
+            operationName,
           });
         })
         .then((result) => {
           const onResolved = options.onResolved;
-          onResolved && onResolved({
-            operationName,
-            variables,
-            query: print(query),
-            result
-          })
+          onResolved &&
+            onResolved({
+              operationName,
+              variables,
+              query: print(query),
+              result,
+            });
           const originalError = result?.errors?.[0].originalError as ApolloError;
           if (originalError) {
             const { graphQLErrors, networkError } = originalError ?? {};
-            graphQLErrors && observer.next({ errors: graphQLErrors})
-            networkError ? observer.error(networkError.message) : observer.error(originalError.message);
+            graphQLErrors && observer.next({ errors: graphQLErrors });
+            networkError
+              ? observer.error(networkError.message)
+              : observer.error(originalError.message);
           } else {
             observer.next(result);
           }

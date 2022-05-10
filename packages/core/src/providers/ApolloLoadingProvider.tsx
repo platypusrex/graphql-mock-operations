@@ -11,7 +11,7 @@ export const ApolloLoadingProvider: React.FC<ApolloLoadingProviderProps> = ({
   children,
 }) => {
   const client = useMemo(() => {
-    return new ApolloClient({ link: createLoadingLink(), cache: new InMemoryCache() })
+    return new ApolloClient({ link: createLoadingLink(), cache: new InMemoryCache() });
   }, []);
 
   return <Provider client={client}>{children}</Provider>;

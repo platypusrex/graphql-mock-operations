@@ -10,6 +10,8 @@ import {
 } from '@apollo/client';
 import { OperationModel } from '../OperationModel';
 
+export type AnyObject<T = any> = Record<string, T>;
+
 export type RequireAtLeastOne<T> = {
   [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>;
 }[keyof T];
@@ -52,7 +54,7 @@ type CacheOptions = Omit<InMemoryCacheConfig, 'addTypename'>;
 export interface MockProviderProps<TOperationState extends OperationState<any, any>> {
   loading?: boolean;
   operationState?: RequireAtLeastOne<TOperationState['state']>;
-  mergeOperations?: RequireAtLeastOne<TOperationState['operation']>
+  mergeOperations?: RequireAtLeastOne<TOperationState['operation']>;
   delay?: number;
   cacheOptions?: CacheOptions;
   clientOptions?: ClientOptions;
@@ -65,10 +67,10 @@ export interface ProtectedMockedProviderProps {
 }
 
 // Create operation types
-type OperationStateObject<TOperationState, TOperationReturn, TModels> = {
+export interface OperationStateObject<TOperationState, TOperationReturn, TModels> {
   state: TOperationState;
   result: TOperationReturn | ((models: TModels) => TOperationReturn);
-};
+}
 
 export type CreateOperationState<
   TMockOperation extends OperationType<any, any>,
@@ -116,10 +118,10 @@ export type OperationFn<TState, TResult, TArgs> = (
   scenario: TState
 ) => OperationType<TResult, TArgs>;
 
-export type OperationState<TMockOperation, TOperationState> = {
+export interface OperationState<TMockOperation, TOperationState> {
   operation: TMockOperation;
   state: Record<keyof TMockOperation, TOperationState>;
-};
+}
 
 // Operation model supporting types
 export type OperationModelType<TMockOperation extends OperationType<any, any>> = Record<

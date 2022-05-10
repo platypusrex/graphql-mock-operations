@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/dts/index.d.ts",
   "author": "Frank Cooke",
   "license": "MIT",
   "files": [
@@ -12,13 +12,13 @@
   "scripts": {
     "build:cjs": "swc src -d dist/cjs --config-file ../../.swcrc -C module.type=commonjs",
     "build:esm": "swc src -d dist/esm --config-file ../../.swcrc -C module.type=es6",
-    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/types --project tsconfig.json",
+    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/dts --project tsconfig.json",
     "build": "yarn clean && concurrently \"yarn build:cjs\" \"yarn build:esm\" \"yarn build:ts\"",
-    "clean": "npx rimraf dist"
+    "clean": "npx rimraf dist",
+    "check:types": "tsc --noEmit"
   },
   "devDependencies": {
     "@apollo/client": "^3.5.9",
-    "@storybook/react": "^6.4.19",
     "@types/react": "^17.0.39",
     "graphql": "^16.3.0",
     "react": "^17.0.2",
@@ -32,7 +32,6 @@
   },
   "peerDependencies": {
     "@apollo/client": "3.*",
-    "@storybook/react": "^6.4.19",
     "graphql": "16.*",
     "react": "17.*"
   }

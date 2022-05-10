@@ -6,7 +6,7 @@ const Book = loader('../gql/bookQuery.graphql');
 
 export const useBook = () => {
   const { data, ...rest } = useQuery<BookQuery, BookQueryVariables>(Book, {
-    variables: { id: '1' }
+    variables: { id: '1' },
   });
   return { book: data?.book, ...rest };
-}
+};

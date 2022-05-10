@@ -1,3 +1,4 @@
-import { MockGQLOperations, createOperation, OperationModel } from './utils';
-export { MockGQLOperations, createOperation, OperationModel }
+import { createOperation, MockGQLOperations, OperationModel } from './utils';
+
+export { createOperation, MockGQLOperations, OperationModel };
 export * from './providers';

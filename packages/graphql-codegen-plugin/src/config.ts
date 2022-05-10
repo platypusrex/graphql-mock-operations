@@ -1,4 +1,4 @@
-import { RawDocumentsConfig, AvoidOptionalsConfig } from '@graphql-codegen/visitor-plugin-common';
+import { AvoidOptionalsConfig, RawDocumentsConfig } from '@graphql-codegen/visitor-plugin-common';
 
 /**
  * @description This plugin generates TypeScript types based on your GraphQLSchema _and_ your GraphQL operations and fragments.
@@ -60,7 +60,7 @@ export interface TypeScriptDocumentsPluginConfig extends RawDocumentsConfig {
    *         defaultValue: true
    * ```
    */
-  avoidOptionals?: boolean | AvoidOptionalsConfig;
+  avoidOptionals?: AvoidOptionalsConfig | boolean;
   /**
    * @description Generates immutable types by adding `readonly` to properties and uses `ReadonlyArray`.
    * @default false

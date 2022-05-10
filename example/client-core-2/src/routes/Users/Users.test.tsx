@@ -27,7 +27,7 @@ describe('Users', () => {
       render(<TestComponent loading />);
       const loadingNodes = await screen.findAllByText(/loading/i);
       expect(loadingNodes).toHaveLength(2);
-    })
+    });
   });
 
   describe('Error states', () => {
@@ -43,7 +43,7 @@ describe('Users', () => {
       const errorNode = await screen.findByText(/Network error:/);
       expect(errorNode).toBeInTheDocument();
       expect(errorNode).toHaveTextContent(`Network error: Server responded with 500`);
-    })
+    });
   });
 
   it('should render a list of user cards', async () => {
@@ -74,8 +74,8 @@ describe('Users', () => {
   it('find all from list using operation models', async () => {
     const users = models.user.models;
     render(<TestComponent />);
-    for(const user of users) {
-      const headingNode = await screen.findByText(`User name: ${user.name}`)
+    for (const user of users) {
+      const headingNode = await screen.findByText(`User name: ${user.name}`);
       expect(headingNode).toBeInTheDocument();
     }
   });
@@ -90,6 +90,6 @@ describe('Users', () => {
 
     await waitFor(() => {
       expect(deleteUser).toHaveBeenCalledTimes(1);
-    })
-  })
+    });
+  });
 });

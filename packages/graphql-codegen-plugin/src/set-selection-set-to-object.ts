@@ -1,18 +1,19 @@
 import {
+  DirectiveNode,
   FieldNode,
-  isObjectType,
-  isUnionType,
   GraphQLField,
-  SchemaMetaFieldDef,
-  TypeMetaFieldDef,
-  SelectionNode,
+  GraphQLNamedType,
   GraphQLObjectType,
   GraphQLOutputType,
-  DirectiveNode,
-  GraphQLNamedType,
-  SelectionSetNode,
   GraphQLSchema,
+  isObjectType,
+  isUnionType,
+  SchemaMetaFieldDef,
+  SelectionNode,
+  SelectionSetNode,
+  TypeMetaFieldDef,
 } from 'graphql';
+import { getBaseType } from '@graphql-codegen/plugin-helpers';
 import {
   BaseSelectionSetProcessor,
   BaseVisitorConvertOptions,
@@ -28,18 +29,17 @@ import {
   NormalizedScalarsMap,
   ParsedDocumentsConfig,
   ProcessResult,
-  SelectionSetToObject as CodegenSelectionSetToObject
+  SelectionSetToObject as CodegenSelectionSetToObject,
 } from '@graphql-codegen/visitor-plugin-common';
-import { getBaseType } from '@graphql-codegen/plugin-helpers';
 
-type FragmentSpreadUsage = {
+interface FragmentSpreadUsage {
   fragmentName: string;
   typeName: string;
   onType: string;
-  selectionNodes: Array<SelectionNode>;
-};
+  selectionNodes: SelectionNode[];
+}
 
-function isMetadataFieldName(name: string) {
+function isMetadataFieldName(name: string): boolean {
   return ['__schema', '__type'].includes(name);
 }
 
@@ -73,7 +73,10 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     );
   }
 
-  public createNext(parentSchemaType: GraphQLNamedType, selectionSet: SelectionSetNode): SelectionSetToObject {
+  createNext(
+    parentSchemaType: GraphQLNamedType,
+    selectionSet: SelectionSetNode
+  ): SelectionSetToObject {
     return new SelectionSetToObject(
       this._processor,
       this._scalars,
@@ -87,12 +90,21 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  transformGroupedSelections() {
+    return this._buildGroupedSelections();
+  }
+
   protected _buildGroupedSelections(): {
     grouped: Record<string, string[]>;
     mustAddEmptyObject: boolean;
     transformedSelectionSets: ProcessResult;
   } {
-    if (!this._selectionSet || !this._selectionSet.selections || this._selectionSet.selections.length === 0) {
+    if (
+      !this._selectionSet ||
+      !this._selectionSet.selections ||
+      this._selectionSet.selections.length === 0
+    ) {
       return { grouped: {}, mustAddEmptyObject: true, transformedSelectionSets: [] };
     }
 
@@ -102,17 +114,23 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     let mustAddEmptyObject = false;
     let transformedSelectionSets: ProcessResult = [];
 
-    const grouped = getPossibleTypes(this._schema, this._parentSchemaType!).reduce((prev, type) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const grouped = getPossibleTypes(this._schema, this._parentSchemaType!).reduce<
+      Record<string, string[]>
+    >((prev, type) => {
       const typeName = type.name;
       const schemaType = this._schema.getType(typeName);
 
       if (!isObjectType(schemaType)) {
-        throw new TypeError(`Invalid state! Schema type ${typeName} is not a valid GraphQL object!`);
+        throw new TypeError(
+          `Invalid state! Schema type ${typeName} is not a valid GraphQL object!`
+        );
       }
 
-      const selectionNodes = selectionNodesByTypeName.get(typeName) || [];
+      const selectionNodes = selectionNodesByTypeName.get(typeName) ?? [];
 
       if (!prev[typeName]) {
+        // eslint-disable-next-line no-param-reassign
         prev[typeName] = [];
       }
 
@@ -128,14 +146,15 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
       }
 
       return prev;
-    }, {} as Record<string, string[]>);
+    }, {});
 
     return { grouped, mustAddEmptyObject, transformedSelectionSets };
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   protected _buildSelectionSetObject(
     parentSchemaType: GraphQLObjectType,
-    selectionNodes: Array<SelectionNode | FragmentSpreadUsage | DirectiveNode>
+    selectionNodes: (DirectiveNode | FragmentSpreadUsage | SelectionNode)[]
   ) {
     const primitiveFields = new Map<string, FieldNode>();
     const primitiveAliasFields = new Map<string, FieldNode>();
@@ -145,13 +164,14 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
         selectedFieldType: GraphQLOutputType;
         field: FieldNode;
       }
-      >();
+    >();
     let requireTypename = false;
 
     // usages via fragment typescript type
     const fragmentsSpreadUsages: string[] = [];
 
     // ensure we mutate no function params
+    // eslint-disable-next-line no-param-reassign
     selectionNodes = [...selectionNodes];
     let inlineFragmentConditional = false;
 
@@ -167,7 +187,7 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
               primitiveFields.set(selectionNode.name.value, selectionNode);
             }
           } else {
-            // @ts-ignore
+            // @ts-expect-error
             let selectedField: GraphQLField<any, any, any> = null;
 
             const fields = parentSchemaType.getFields();
@@ -183,20 +203,22 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
 
             const fieldName = getFieldNodeNameValue(selectionNode);
             let linkFieldNode = linkFieldSelectionSets.get(fieldName);
-            if (!linkFieldNode) {
-              linkFieldNode = {
-                selectedFieldType: selectedField.type,
-                field: selectionNode,
-              };
-            } else {
-              linkFieldNode = {
-                ...linkFieldNode,
-                field: {
-                  ...linkFieldNode.field,
-                  selectionSet: mergeSelectionSets(linkFieldNode.field.selectionSet!, selectionNode.selectionSet),
-                },
-              };
-            }
+            linkFieldNode = !linkFieldNode
+              ? {
+                  field: selectionNode,
+                  selectedFieldType: selectedField.type,
+                }
+              : {
+                  ...linkFieldNode,
+                  field: {
+                    ...linkFieldNode.field,
+                    selectionSet: mergeSelectionSets(
+                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                      linkFieldNode.field.selectionSet!,
+                      selectionNode.selectionSet
+                    ),
+                  },
+                };
             linkFieldSelectionSets.set(fieldName, linkFieldNode);
           }
         } else if (selectionNode.kind === 'Directive') {
@@ -218,39 +240,51 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
       const fragmentType = this._schema.getType(selectionNode.onType);
 
       if (fragmentType == null) {
-        throw new TypeError(`Unexpected error: Type ${selectionNode.onType} does not exist within schema.`);
+        throw new TypeError(
+          `Unexpected error: Type ${selectionNode.onType} does not exist within schema.`
+        );
       }
 
       if (
         parentSchemaType.name === selectionNode.onType ||
-        parentSchemaType.getInterfaces().find(iinterface => iinterface.name === selectionNode.onType) != null ||
+        parentSchemaType
+          .getInterfaces()
+          .find((iinterface) => iinterface.name === selectionNode.onType) != null ||
         (isUnionType(fragmentType) &&
-          fragmentType.getTypes().find(objectType => objectType.name === parentSchemaType.name))
+          fragmentType.getTypes().find((objectType) => objectType.name === parentSchemaType.name))
       ) {
         // also process fields from fragment that apply for this parentType
         const flatten = this.flattenSelectionSet(selectionNode.selectionNodes);
         const typeNodes = flatten.get(parentSchemaType.name) ?? [];
         selectionNodes.push(...typeNodes);
         for (const iinterface of parentSchemaType.getInterfaces()) {
-          const typeNodes = flatten.get(iinterface.name) ?? [];
-          selectionNodes.push(...typeNodes);
+          const tNodes = flatten.get(iinterface.name) ?? [];
+          selectionNodes.push(...tNodes);
         }
       }
     }
 
     const linkFields: LinkField[] = [];
     for (const { field, selectedFieldType } of linkFieldSelectionSets.values()) {
-      const realSelectedFieldType = getBaseType(selectedFieldType as any);
+      const realSelectedFieldType = getBaseType(selectedFieldType);
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const selectionSet = this.createNext(realSelectedFieldType, field.selectionSet!);
       const isConditional = hasConditionalDirectives(field) || inlineFragmentConditional;
       linkFields.push({
-        alias: field.alias ? this._processor.config.formatNamedField(field.alias.value, selectedFieldType) : undefined,
-        name: this._processor.config.formatNamedField(field.name.value, selectedFieldType, isConditional),
-        type: realSelectedFieldType.name,
+        alias: field.alias
+          ? this._processor.config.formatNamedField(field.alias.value, selectedFieldType)
+          : undefined,
+        name: this._processor.config.formatNamedField(
+          field.name.value,
+          selectedFieldType,
+          isConditional
+        ),
         selectionSet: this._processor.config.wrapTypeWithModifiers(
           selectionSet.transformSelectionSet().split(`\n`).join(`\n  `),
           selectedFieldType
         ),
+        type: realSelectedFieldType.name,
       });
     }
 
@@ -263,34 +297,34 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     );
 
     const transformed: ProcessResult = [
-      // @ts-ignore
-      ...(typeInfoField ? this._processor.transformTypenameField(typeInfoField.type, typeInfoField.name) : []),
-      // @ts-ignore
+      // @ts-expect-error
+      ...(typeInfoField
+        ? this._processor.transformTypenameField(typeInfoField.type, typeInfoField.name)
+        : []),
       ...this._processor.transformPrimitiveFields(
         parentSchemaType,
-        Array.from(primitiveFields.values()).map(field => ({
-          isConditional: hasConditionalDirectives(field),
+        [...primitiveFields.values()].map((field) => ({
           fieldName: field.name.value,
+          isConditional: hasConditionalDirectives(field),
         }))
       ),
-      // @ts-ignore
       ...this._processor.transformAliasesPrimitiveFields(
         parentSchemaType,
-        Array.from(primitiveAliasFields.values()).map(field => ({
+        [...primitiveAliasFields.values()].map((field) => ({
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           alias: field.alias!.value,
           fieldName: field.name.value,
         }))
       ),
-      // @ts-ignore
       ...this._processor.transformLinkFields(linkFields),
     ].filter(Boolean);
 
-    const allStrings: string[] = transformed.filter(t => typeof t === 'string') as string[];
+    const allStrings: string[] = transformed.filter((t) => typeof t === 'string') as string[];
     const allObjectsMerged: string[] = transformed
-      .filter(t => typeof t !== 'string')
-      // @ts-ignore
+      .filter((t) => typeof t !== 'string')
+      // @ts-expect-error
       .map((t: NameAndType) => `${t.name}: ${t.type}`);
-    // @ts-ignore
+    // @ts-expect-error
     let mergedObjectsAsString: string = null;
 
     if (allObjectsMerged.length > 0) {
@@ -299,10 +333,6 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
 
     const fields = [...allStrings, mergedObjectsAsString, ...fragmentsSpreadUsages].filter(Boolean);
 
-    return { typeString: this._processor.buildSelectionSetFromStrings(fields), transformed };
-  }
-
-  public transformGroupedSelections() {
-    return this._buildGroupedSelections();
+    return { transformed, typeString: this._processor.buildSelectionSetFromStrings(fields) };
   }
 }

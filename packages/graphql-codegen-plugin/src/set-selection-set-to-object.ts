@@ -39,7 +39,7 @@ interface FragmentSpreadUsage {
   selectionNodes: SelectionNode[];
 }
 
-function isMetadataFieldName(name: string) {
+function isMetadataFieldName(name: string): boolean {
   return ['__schema', '__type'].includes(name);
 }
 
@@ -90,6 +90,11 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  transformGroupedSelections() {
+    return this._buildGroupedSelections();
+  }
+
   protected _buildGroupedSelections(): {
     grouped: Record<string, string[]>;
     mustAddEmptyObject: boolean;
@@ -109,6 +114,7 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     let mustAddEmptyObject = false;
     let transformedSelectionSets: ProcessResult = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const grouped = getPossibleTypes(this._schema, this._parentSchemaType!).reduce<
       Record<string, string[]>
     >((prev, type) => {
@@ -121,9 +127,10 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
         );
       }
 
-      const selectionNodes = selectionNodesByTypeName.get(typeName) || [];
+      const selectionNodes = selectionNodesByTypeName.get(typeName) ?? [];
 
       if (!prev[typeName]) {
+        // eslint-disable-next-line no-param-reassign
         prev[typeName] = [];
       }
 
@@ -144,6 +151,7 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     return { grouped, mustAddEmptyObject, transformedSelectionSets };
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   protected _buildSelectionSetObject(
     parentSchemaType: GraphQLObjectType,
     selectionNodes: (DirectiveNode | FragmentSpreadUsage | SelectionNode)[]
@@ -163,6 +171,7 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     const fragmentsSpreadUsages: string[] = [];
 
     // ensure we mutate no function params
+    // eslint-disable-next-line no-param-reassign
     selectionNodes = [...selectionNodes];
     let inlineFragmentConditional = false;
 
@@ -196,14 +205,15 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
             let linkFieldNode = linkFieldSelectionSets.get(fieldName);
             linkFieldNode = !linkFieldNode
               ? {
-                  selectedFieldType: selectedField.type,
                   field: selectionNode,
+                  selectedFieldType: selectedField.type,
                 }
               : {
                   ...linkFieldNode,
                   field: {
                     ...linkFieldNode.field,
                     selectionSet: mergeSelectionSets(
+                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                       linkFieldNode.field.selectionSet!,
                       selectionNode.selectionSet
                     ),
@@ -248,8 +258,8 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
         const typeNodes = flatten.get(parentSchemaType.name) ?? [];
         selectionNodes.push(...typeNodes);
         for (const iinterface of parentSchemaType.getInterfaces()) {
-          const typeNodes = flatten.get(iinterface.name) ?? [];
-          selectionNodes.push(...typeNodes);
+          const tNodes = flatten.get(iinterface.name) ?? [];
+          selectionNodes.push(...tNodes);
         }
       }
     }
@@ -257,6 +267,8 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
     const linkFields: LinkField[] = [];
     for (const { field, selectedFieldType } of linkFieldSelectionSets.values()) {
       const realSelectedFieldType = getBaseType(selectedFieldType);
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const selectionSet = this.createNext(realSelectedFieldType, field.selectionSet!);
       const isConditional = hasConditionalDirectives(field) || inlineFragmentConditional;
       linkFields.push({
@@ -268,11 +280,11 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
           selectedFieldType,
           isConditional
         ),
-        type: realSelectedFieldType.name,
         selectionSet: this._processor.config.wrapTypeWithModifiers(
           selectionSet.transformSelectionSet().split(`\n`).join(`\n  `),
           selectedFieldType
         ),
+        type: realSelectedFieldType.name,
       });
     }
 
@@ -289,23 +301,21 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
       ...(typeInfoField
         ? this._processor.transformTypenameField(typeInfoField.type, typeInfoField.name)
         : []),
-      // @ts-expect-error
       ...this._processor.transformPrimitiveFields(
         parentSchemaType,
         [...primitiveFields.values()].map((field) => ({
-          isConditional: hasConditionalDirectives(field),
           fieldName: field.name.value,
+          isConditional: hasConditionalDirectives(field),
         }))
       ),
-      // @ts-expect-error
       ...this._processor.transformAliasesPrimitiveFields(
         parentSchemaType,
         [...primitiveAliasFields.values()].map((field) => ({
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           alias: field.alias!.value,
           fieldName: field.name.value,
         }))
       ),
-      // @ts-expect-error
       ...this._processor.transformLinkFields(linkFields),
     ].filter(Boolean);
 
@@ -323,10 +333,6 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
 
     const fields = [...allStrings, mergedObjectsAsString, ...fragmentsSpreadUsages].filter(Boolean);
 
-    return { typeString: this._processor.buildSelectionSetFromStrings(fields), transformed };
-  }
-
-  transformGroupedSelections() {
-    return this._buildGroupedSelections();
+    return { transformed, typeString: this._processor.buildSelectionSetFromStrings(fields) };
   }
 }

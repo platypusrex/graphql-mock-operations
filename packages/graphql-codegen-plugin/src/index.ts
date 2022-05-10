@@ -5,7 +5,7 @@ import {
   Kind,
   OperationDefinitionNode,
 } from 'graphql';
-import { oldVisit, PluginFunction, Types } from '@graphql-codegen/plugin-helpers';
+import { PluginFunction, Types } from '@graphql-codegen/plugin-helpers';
 import { LoadedFragment, optimizeOperations } from '@graphql-codegen/visitor-plugin-common';
 import { TypeScriptDocumentsPluginConfig } from './config';
 import { TypeScriptDocumentsVisitor } from './visitor';
@@ -21,6 +21,7 @@ export const plugin: PluginFunction<TypeScriptDocumentsPluginConfig, Types.Compl
       })
     : rawDocuments;
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const allAst = concatAST(documents.map((v) => v.document!));
 
   const allFragments: LoadedFragment[] = [
@@ -29,12 +30,12 @@ export const plugin: PluginFunction<TypeScriptDocumentsPluginConfig, Types.Compl
         (d) => d.kind === Kind.FRAGMENT_DEFINITION
       ) as FragmentDefinitionNode[]
     ).map((fragmentDef) => ({
-      node: fragmentDef,
-      name: fragmentDef.name.value,
-      onType: fragmentDef.typeCondition.name.value,
       isExternal: false,
+      name: fragmentDef.name.value,
+      node: fragmentDef,
+      onType: fragmentDef.typeCondition.name.value,
     })),
-    ...(config.externalFragments || []),
+    ...(config.externalFragments ?? []),
   ];
 
   const visitor = new TypeScriptDocumentsVisitor(schema, config, allFragments);
@@ -47,12 +48,6 @@ export const plugin: PluginFunction<TypeScriptDocumentsPluginConfig, Types.Compl
   const operationObjectArr = definitions.map((def) => def.operation);
   const combinedOperationDefinitions = visitor.getCombinedOperationsDefinition(operationObjectArr);
 
-  const visitorResult = oldVisit(allAst, {
-    leave: visitor,
-  });
-
-  let content = visitorResult.definitions.join('\n');
-
   if (config.addOperationExport) {
     const exportConsts: any[] = [];
 
@@ -61,15 +56,6 @@ export const plugin: PluginFunction<TypeScriptDocumentsPluginConfig, Types.Compl
         exportConsts.push(`export declare const ${d.name?.value}: import("graphql").DocumentNode;`);
       }
     });
-
-    content = [...visitorResult.definitions, ...exportConsts].join('\n');
-  }
-
-  if (config.globalNamespace) {
-    content = `
-    declare global {
-      ${content}
-    }`;
   }
 
   const imports = `import { GraphQLError, GraphQLResolveInfo } from 'graphql';`;
@@ -88,12 +74,12 @@ type ResolverType<TResult, TArgs> = Record<keyof TResult, ResolverFn<TResult[key
   `;
 
   return {
+    content: [headers, ...operationDefinitions, ...combinedOperationDefinitions].join('\n'),
     prepend: [
       imports,
       ...visitor.getImports(),
       ...visitor.getGlobalDeclarations(visitor.config.noExport),
     ],
-    content: [headers, ...operationDefinitions, ...combinedOperationDefinitions].join('\n'),
   };
 };
 

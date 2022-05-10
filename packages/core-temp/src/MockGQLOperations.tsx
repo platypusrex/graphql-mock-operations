@@ -50,19 +50,19 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
   private readonly introspectionResult: MockGQLOperationsConfig['introspectionResult'];
   private _models: TMockGQLOperations['models'] = {};
   private _operations: MockGQLOperationType<TMockGQLOperations['state']>['operations'] = {
-    query: [],
     mutation: [],
+    query: [],
   };
 
   constructor({ introspectionResult }: MockGQLOperationsConfig) {
     this.introspectionResult = introspectionResult;
   }
 
-  get operations() {
+  get operations(): MockGQLOperationType<TMockGQLOperations['state']>['operations'] {
     return this._operations;
   }
 
-  get models() {
+  get models(): TMockGQLOperations['models'] {
     return this._models;
   }
 
@@ -85,6 +85,40 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
     this._models = { ...this._models, [name]: new OperationModel<TModel>(data) };
   };
 
+  queryOperation = <
+    TMockOperation extends OperationType<any, any>,
+    TOperationState extends OperationState<TMockOperation, string>
+  >(
+    name: keyof TMockOperation,
+    state: CreateOperationState<
+      TMockOperation,
+      TOperationState['state'][keyof TMockOperation],
+      TMockGQLOperations['models']
+    >
+  ): void => {
+    const operation = this.createOperation(name, state);
+    if (this._operations) {
+      this._operations.query = [...((this._operations.query as any) ?? []), operation];
+    }
+  };
+
+  mutationOperation = <
+    TMockOperation extends OperationType<any, any>,
+    TOperationState extends OperationState<TMockOperation, string>
+  >(
+    name: keyof TMockOperation,
+    state: CreateOperationState<
+      TMockOperation,
+      TOperationState['state'][keyof TMockOperation],
+      TMockGQLOperations['models']
+    >
+  ): void => {
+    const operation = this.createOperation(name, state);
+    if (this._operations) {
+      this._operations.mutation = [...((this._operations.mutation as any) ?? []), operation];
+    }
+  };
+
   private createOperation =
     <
       TMockOperation extends OperationType<any, any>,
@@ -102,6 +136,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       Parameters<TMockOperation[keyof TMockOperation]>
     > =>
     (scenario: Record<keyof TMockOperation, TOperationState['state'][keyof TMockOperation]>) => ({
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       [name]: (
         parent: Parameters<TMockOperation[keyof TMockOperation]>[0],
         variables: Parameters<TMockOperation[keyof TMockOperation]>[1],
@@ -110,15 +145,15 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       ) => {
         const currentState = scenario[name] ? scenario[name] : 'SUCCESS';
         let currentStateObj =
-          typeof state === 'function'
-            ? (state as Function)(parent, variables, context, info)
-            : state;
+          typeof state === 'function' ? state(parent, variables, context, info) : state;
 
+        // @ts-ignore
         currentStateObj = [...currentStateObj].find((s) => s.state === currentState);
         if (!currentStateObj) {
           throw new Error(`${name} operation: unable to match state`);
         }
 
+        // @ts-ignore
         const { result } = currentStateObj;
         const { loading, graphQLErrors, networkError } = result ?? {};
         if (loading) {
@@ -135,40 +170,6 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       },
     });
 
-  queryOperation = <
-    TMockOperation extends OperationType<any, any>,
-    TOperationState extends OperationState<TMockOperation, string>
-  >(
-    name: keyof TMockOperation,
-    state: CreateOperationState<
-      TMockOperation,
-      TOperationState['state'][keyof TMockOperation],
-      TMockGQLOperations['models']
-    >
-  ): void => {
-    const operation = this.createOperation(name, state);
-    if (this._operations) {
-      this._operations.query = [...(this._operations.query ?? []), operation];
-    }
-  };
-
-  mutationOperation = <
-    TMockOperation extends OperationType<any, any>,
-    TOperationState extends OperationState<TMockOperation, string>
-  >(
-    name: keyof TMockOperation,
-    state: CreateOperationState<
-      TMockOperation,
-      TOperationState['state'][keyof TMockOperation],
-      TMockGQLOperations['models']
-    >
-  ): void => {
-    const operation = this.createOperation(name, state);
-    if (this._operations) {
-      this._operations.mutation = [...(this._operations.mutation ?? []), operation];
-    }
-  };
-
   private generateProviderProps = ({
     operationState,
     mergeOperations,
@@ -178,12 +179,12 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
   }: MockProviderProps<TMockGQLOperations['state']> &
     ProtectedMockedProviderProps): CreateApolloClient => ({
     mocks: {
+      delay,
+      introspectionResult: this.introspectionResult,
+      onResolved,
       resolvers: mergeOperations
         ? this.mergeOperations(mergeOperations)
         : this.createOperations(operationState),
-      introspectionResult: this.introspectionResult,
-      delay,
-      onResolved,
     },
     ...rest,
   });
@@ -198,20 +199,22 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
         operation({} as TMockGQLOperations['state'])
       )[0] as keyof TMockGQLOperations['state'];
       const operationState = Object.keys(defaultState) ? { [key]: defaultState[key] } : {};
+      // eslint-disable-next-line no-param-reassign
       operationObj[key as keyof MockGQLOperationsCreate<any, any>] = operation(
         operationState as unknown as TMockGQLOperations['state']
       )[key];
       return operationObj;
-    }, {});
+    }, {} as MockGQLOperationsCreate<any, any>);
   };
 
   private generateResolverKey = (key: keyof MockGQLOperationType<any>['operations']): string =>
-    (key as any).charAt(0).toUpperCase() + (key as any).slice(1);
+    (key as string).charAt(0).toUpperCase() + (key as string).slice(1);
 
   private createOperations = (state?: TMockGQLOperations['state']): IResolvers =>
     [this._operations ?? []].reduce<IResolvers>((operationObj, operation) => {
       const keys = Object.keys(operation);
       for (const key of keys as (keyof typeof operation)[]) {
+        // eslint-disable-next-line no-param-reassign
         operationObj[this.generateResolverKey(key)] = this.mapOperations(
           this._operations?.[key] ?? [],
           state
@@ -223,7 +226,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
   private mergeOperations(
     operations: Partial<TMockGQLOperations['state']['operation']>,
     operationState?: MockProviderProps<TMockGQLOperations['state']>['operationState']
-  ) {
+  ): IResolvers {
     const rootResolverTypes = (
       this.introspectionResult as IntrospectionQuery
     ).__schema.types.filter((type) => type.name === 'Mutation' || type.name === 'Query');
@@ -236,7 +239,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       )?.name;
 
       if (resolverRootKey) {
-        // @ts-expect-error
+        // @ts-ignore
         acc[resolverRootKey] = {
           ...acc[resolverRootKey],
           [operationName]: operations?.[operationName],

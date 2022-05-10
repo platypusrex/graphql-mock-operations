@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
     "example/*",
     "packages/*"
   ],
@@ -13,27 +12,20 @@
     "dev": "turbo run dev --parallel",
     "dev:example": "npx concurrently \"yarn workspace example-server start\" \"yarn workspace example-client start\" ",
     "dev:example:storybook": "npx concurrently \"yarn dev:example\" \"yarn workspace example-client storybook\"",
-    "format": "beemo prettier",
+    "format": "beemo prettier --write '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
     "lint": "beemo eslint '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
-    "clean:all": "turbo run clean",
+    "clean": "turbo run clean",
     "create-config": "beemo create-config"
   },
   "devDependencies": {
     "@beemo/cli": "^2.0.6",
     "@beemo/core": "^2.1.4",
-    "@beemo/dev": "^1.7.11",
-    "@beemo/driver-prettier": "^2.0.6",
-    "prettier": "^2.5.1",
+    "@platypusrex/dev-configs": "^0.0.3",
     "turbo": "latest"
   },
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=14.0.0"
   },
-  "packageManager": "yarn@1.22.11",
-  "dependencies": {
-    "eslint": "^8.13.0",
-    "eslint-plugin-jest": "^26.1.4",
-    "eslint-plugin-prettier": "^4.0.0"
-  }
+  "packageManager": "yarn@1.22.11"
 }

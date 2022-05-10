@@ -21,7 +21,7 @@ export class OperationModel<TModel extends OperationType<any, any>> {
     this._models = models;
   }
 
-  get models() {
+  get models(): ResolverReturn<ReturnType<TModel[keyof TModel]>>[] {
     return this._models;
   }
 
@@ -30,16 +30,20 @@ export class OperationModel<TModel extends OperationType<any, any>> {
     value: ResolverReturn<ReturnType<TModel[keyof TModel]>>[keyof ResolverReturn<
       ReturnType<TModel[keyof TModel]>
     >]
-  ) => this._models.find((model) => model[key] === value) ?? null;
+  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> | null =>
+    this._models.find((model) => model[key] === value) ?? null;
 
-  findFirst = () => {
+  findFirst = (): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
     const [firstModel] = this._models;
     return firstModel;
   };
 
-  findLast = () => this._models[this._models.length - 1];
+  findLast = (): ResolverReturn<ReturnType<TModel[keyof TModel]>> =>
+    this._models[this._models.length - 1];
 
-  create = (model: ResolverReturn<ReturnType<TModel[keyof TModel]>>) => {
+  create = (
+    model: ResolverReturn<ReturnType<TModel[keyof TModel]>>
+  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
     this._models = [...this._models, model];
     return model;
   };
@@ -50,9 +54,10 @@ export class OperationModel<TModel extends OperationType<any, any>> {
       ReturnType<TModel[keyof TModel]>
     >],
     data: Partial<ResolverReturn<ReturnType<TModel[keyof TModel]>>>
-  ) => {
+  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
     const models = this._models.filter((model) => model[key] === value);
     if (models.length > 1) {
+      // eslint-disable-next-line no-console
       console.warn(
         'update model: more than one model found. Please provide a unique key/value pair for improved results.'
       );
@@ -71,12 +76,12 @@ export class OperationModel<TModel extends OperationType<any, any>> {
     value: ResolverReturn<ReturnType<TModel[keyof TModel]>>[keyof ResolverReturn<
       ReturnType<TModel[keyof TModel]>
     >]
-  ) => {
-    const model = this._models.find((model) => model[key] === value);
+  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
+    const model = this._models.find((m) => m[key] === value);
     if (!model) {
       throw new Error('Delete model: model not found. Please provide a unique key/value pair.');
     }
-    this._models = this._models.filter((model) => model[key] !== value);
+    this._models = this._models.filter((m) => m[key] !== value);
     return model;
   };
 }

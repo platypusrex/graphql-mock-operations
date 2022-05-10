@@ -1,5 +1,5 @@
 const config = {
-  module: '@beemo/dev',
+  module: '@platypusrex/dev-configs',
   drivers: {
     eslint: {
       args: ['--cache-location', './node_modules/.cache/eslint', '--cache'],

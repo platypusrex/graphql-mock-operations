@@ -67,10 +67,10 @@ export interface ProtectedMockedProviderProps {
 }
 
 // Create operation types
-type OperationStateObject<TOperationState, TOperationReturn, TModels> = {
+export interface OperationStateObject<TOperationState, TOperationReturn, TModels> {
   state: TOperationState;
   result: TOperationReturn | ((models: TModels) => TOperationReturn);
-};
+}
 
 export type CreateOperationState<
   TMockOperation extends OperationType<any, any>,
@@ -118,10 +118,10 @@ export type OperationFn<TState, TResult, TArgs> = (
   scenario: TState
 ) => OperationType<TResult, TArgs>;
 
-export type OperationState<TMockOperation, TOperationState> = {
+export interface OperationState<TMockOperation, TOperationState> {
   operation: TMockOperation;
   state: Record<keyof TMockOperation, TOperationState>;
-};
+}
 
 // Operation model supporting types
 export type OperationModelType<TMockOperation extends OperationType<any, any>> = Record<

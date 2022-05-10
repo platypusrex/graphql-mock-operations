@@ -22,7 +22,7 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
     _enumNames: string[] = [],
     _enumPrefix = true,
     _enumValues: ParsedEnumValuesMap = {},
-    _applyCoercion: boolean = false,
+    _applyCoercion = false,
     _directiveArgumentAndInputFieldMappings: ParsedDirectiveArgumentAndInputFieldMappings = {},
     private _maybeType = 'Maybe'
   ) {
@@ -36,17 +36,6 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
       _applyCoercion,
       _directiveArgumentAndInputFieldMappings
     );
-  }
-
-  private clearOptional(str: string): string {
-    const prefix = this._namespacedImportName ? `${this._namespacedImportName}.` : '';
-    const rgx = new RegExp(`^${this.wrapMaybe(`(.*?)`)}$`, 'i');
-
-    if (str.startsWith(`${prefix}${this._maybeType}`)) {
-      return str.replace(rgx, '$1');
-    }
-
-    return str;
   }
 
   wrapAstTypeWithModifiers(baseType: string, typeNode: TypeNode, applyCoercion = false): string {
@@ -66,35 +55,6 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
       );
     }
     return this.wrapMaybe(baseType);
-  }
-
-  protected formatFieldString(
-    fieldName: string,
-    isNonNullType: boolean,
-    hasDefaultValue: boolean
-  ): string {
-    return `${fieldName}${this.getAvoidOption(isNonNullType, hasDefaultValue) ? '?' : ''}`;
-  }
-
-  protected wrapMaybe(type?: string) {
-    const prefix = this._namespacedImportName ? `${this._namespacedImportName}.` : '';
-    return `${prefix}${this._maybeType}${type ? `<${type}>` : ''}`;
-  }
-
-  protected getAvoidOption(isNonNullType: boolean, hasDefaultValue: boolean) {
-    const options = normalizeAvoidOptionals(this._avoidOptionals);
-    return (
-      ((options.object || !options.defaultValue) && hasDefaultValue) ||
-      (!options.object && !isNonNullType)
-    );
-  }
-
-  protected getPunctuation(): string {
-    return ';';
-  }
-
-  protected formatTypeString(fieldType: string): string {
-    return fieldType;
   }
 
   getName<TDefinitionType extends InterfaceOrVariable>(node: TDefinitionType): string {
@@ -128,6 +88,35 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
     );
   }
 
+  protected formatFieldString(
+    fieldName: string,
+    isNonNullType: boolean,
+    hasDefaultValue: boolean
+  ): string {
+    return `${fieldName}${this.getAvoidOption(isNonNullType, hasDefaultValue) ? '?' : ''}`;
+  }
+
+  protected wrapMaybe(type?: string): string {
+    const prefix = this._namespacedImportName ? `${this._namespacedImportName}.` : '';
+    return `${prefix}${this._maybeType}${type ? `<${type}>` : ''}`;
+  }
+
+  protected getAvoidOption(isNonNullType: boolean, hasDefaultValue: boolean): boolean {
+    const options = normalizeAvoidOptionals(this._avoidOptionals);
+    return (
+      ((options.object || !options.defaultValue) && hasDefaultValue) ||
+      (!options.object && !isNonNullType)
+    );
+  }
+
+  protected getPunctuation(): string {
+    return ';';
+  }
+
+  protected formatTypeString(fieldType: string): string {
+    return fieldType;
+  }
+
   protected getScalar(name: string): string {
     const prefix = this._namespacedImportName ? `${this._namespacedImportName}.` : '';
     return `${prefix}Scalars['${name}']`;
@@ -151,7 +140,7 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
       .reverse()
       .find((a) => !!a);
 
-    return type || null;
+    return type ?? null;
   }
 
   protected transformVariable<TDefinitionType extends InterfaceOrVariable>(
@@ -173,7 +162,7 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
         typeValue = overrideType;
       } else if (this._scalars[typeName]) {
         typeValue = this.getScalar(typeName);
-      } else if (this._enumValues[typeName] && this._enumValues[typeName].sourceFile) {
+      } else if (this._enumValues[typeName]?.sourceFile) {
         typeValue =
           this._enumValues[typeName].typeIdentifier || this._enumValues[typeName].sourceIdentifier;
       } else {
@@ -185,6 +174,7 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
 
     const fieldName = this.getName(variable);
     const fieldType = this.wrapAstTypeWithModifiers(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       typeValue!,
       variable.type,
       !!this._applyCoercion
@@ -200,5 +190,16 @@ export class TypeScriptOperationVariablesToObject extends OperationVariablesToOb
     );
 
     return `${formattedFieldString}: ${formattedTypeString}`;
+  }
+
+  private clearOptional(str: string): string {
+    const prefix = this._namespacedImportName ? `${this._namespacedImportName}.` : '';
+    const rgx = new RegExp(`^${this.wrapMaybe(`(.*?)`)}$`, 'i');
+
+    if (str.startsWith(`${prefix}${this._maybeType}`)) {
+      return str.replace(rgx, '$1');
+    }
+
+    return str;
   }
 }

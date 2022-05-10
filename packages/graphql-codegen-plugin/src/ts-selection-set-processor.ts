@@ -38,10 +38,12 @@ export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<S
     if (hasConditionals) {
       const avoidOptional =
         // TODO: check type and exec only if relevant
+        /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
         this.config.avoidOptionals === true ||
         this.config.avoidOptionals?.field ||
         this.config.avoidOptionals?.inputValue ||
         this.config.avoidOptionals?.object;
+      /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
       const transform = avoidOptional ? 'MakeMaybe' : 'MakeOptional';
       resString = `${
         this.config.namespacedImportName ? `${this.config.namespacedImportName}.` : ''

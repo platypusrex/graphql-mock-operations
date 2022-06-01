@@ -6,6 +6,6 @@ generates:
       - typescript
       - typescript-operations
       - '@graphql-mock-operations/codegen-plugin'
-  introspection.json:
+  src/lib/operations/introspection.json:
     plugins:
       - introspection

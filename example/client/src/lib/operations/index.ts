@@ -5,7 +5,7 @@ import { userOperation, UserOperationState } from './userOperation';
 import { bookOperation, BookOperationState } from './bookOperation';
 import { createUserOperation, CreateUserOperationState } from './createUserOperation';
 import { deleteUserOperation, DeleteUserOperationState } from './deleteUserOperation';
-import introspectionResult from '../../../introspection.json';
+import introspectionResult from './introspection.json';
 
 export interface MockGQLOperationsType {
   operations: MockOperations;

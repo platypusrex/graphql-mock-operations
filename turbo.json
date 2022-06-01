@@ -10,6 +10,9 @@
     "dev": {
       "cache": false
     },
+    "check:types": {
+      "outputs": []
+    },
     "clean": {
       "outputs": [],
       "cache": false

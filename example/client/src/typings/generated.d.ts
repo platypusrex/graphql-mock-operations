@@ -13,10 +13,26 @@ export type Scalars = {
   Float: number;
 };
 
+export type Address = {
+  __typename?: 'Address';
+  addressLineOne: Scalars['String'];
+  addressLineTwo?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  state: Scalars['String'];
+  zip: Scalars['String'];
+};
+
 export type Book = {
   __typename?: 'Book';
+  author?: Maybe<User>;
   authorId: Scalars['ID'];
   id: Scalars['ID'];
+  numPages: Scalars['Int'];
+  title: Scalars['String'];
+};
+
+export type CreateBookInput = {
+  authorId: Scalars['ID'];
   numPages: Scalars['Int'];
   title: Scalars['String'];
 };
@@ -28,13 +44,25 @@ export type CreateUserInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createBook: Book;
   createUser: User;
+  deleteBook?: Maybe<Book>;
   deleteUser?: Maybe<User>;
+};
+
+
+export type MutationCreateBookArgs = {
+  input: CreateBookInput;
 };
 
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteBookArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -45,6 +73,7 @@ export type MutationDeleteUserArgs = {
 export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
+  books: Array<Book>;
   user?: Maybe<User>;
   users: Array<User>;
 };
@@ -61,6 +90,8 @@ export type QueryUserArgs = {
 
 export type User = {
   __typename?: 'User';
+  address?: Maybe<Array<Address>>;
+  books?: Maybe<Array<Book>>;
   email: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -104,12 +135,15 @@ export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, name: string }> };
 
 
+export type GraphQLErrors = { graphQLErrors?: GraphQLError | GraphQLError[] };
+export type NetworkError = { networkError?: Error };
+export type OperationLoading = { loading?: boolean };
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => Promise<TResult> | TResult | GraphQLError[] | Error;
+) => Promise<TResult> | TResult | GraphQLErrors | NetworkError | OperationLoading;
 
 type ResolverType<TResult, TArgs> = Record<keyof TResult, ResolverFn<TResult[keyof TResult], {}, {}, TArgs>>;  
   

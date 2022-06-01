@@ -9,7 +9,7 @@ import {
 } from './operations';
 // models
 import { BookModel, UserModel } from './models';
-import introspectionResult from '../../../introspection.json';
+import introspectionResult from './introspection.json';
 
 export interface MockGQLOperationsType {
   state: BookOperationState &

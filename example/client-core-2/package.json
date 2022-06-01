@@ -1,7 +1,9 @@
 {
-  "name": "@examples/client-core-2",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@examples/client-core",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Frank Cooke",
+  "license": "MIT",
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@graphql-mock-operations/codegen-plugin": "1.0.0",
@@ -42,6 +44,9 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "beemoConfig": {
+    "createReactApp": true
   },
   "browserslist": {
     "production": [

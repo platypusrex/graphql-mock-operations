@@ -1280,6 +1280,14 @@
     "@boost/event" "^3.0.1"
     "@types/prettier" "^2.4.4"
 
+"@beemo/driver-typescript@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@beemo/driver-typescript/-/driver-typescript-2.1.2.tgz#8b004b256814c8769b41fb60399c1438652af8e9"
+  integrity sha512-oweBlz8fIImvO5QBMSUSHk1sybkhOifDGP4giupMZisNXrn+zjmE/MAl3tZtWmd7f3rtt39hPLeVM8/3pe66zg==
+  dependencies:
+    "@boost/event" "^3.0.1"
+    rimraf "^3.0.2"
+
 "@boost/args@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@boost/args/-/args-3.0.1.tgz#eacd6c35af8482a8535044dc4e747d848739db0f"
@@ -2370,14 +2378,15 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@platypusrex/dev-configs@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@platypusrex/dev-configs/-/dev-configs-0.0.3.tgz#6015df1fe291535a1092eb38f65e2e9ea96b72e5"
-  integrity sha512-1g8xonalRmvN/QgtiPUGsUtHTDnsMnb6kY/LmIP5J/HHI/qkoITWwsFMW3ei9ygci0tmPIIxe7Y1K+6m66y6Qg==
+"@platypusrex/dev-configs@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@platypusrex/dev-configs/-/dev-configs-0.0.4.tgz#4b4dbce70488191b38f7cd5d83460864affdcb1f"
+  integrity sha512-M4mD6TC3FqLVu3HhM0MqaowvExgHZLSVeFimK1KGSLrJx78/kIOtBxLqRBdJhFRHfzWi6M1p2bUkPy++paU41g==
   dependencies:
     "@beemo/config-constants" "^1.1.0"
     "@beemo/driver-eslint" "^2.0.5"
     "@beemo/driver-prettier" "^2.0.6"
+    "@beemo/driver-typescript" "^2.1.2"
     "@typescript-eslint/eslint-plugin" "^5.22.0"
     "@typescript-eslint/parser" "^5.22.0"
     eslint "^8.15.0"

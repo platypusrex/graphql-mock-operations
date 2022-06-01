@@ -28,6 +28,7 @@ coverage/
 .eslintrc.js
 .prettierignore
 prettier.config.js
+*.tsbuildinfo
 
 # local env files
 .env

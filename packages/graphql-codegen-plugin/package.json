@@ -12,10 +12,10 @@
   "scripts": {
     "build:cjs": "swc src -d dist/cjs --config-file ../../.swcrc -C module.type=commonjs",
     "build:esm": "swc src -d dist/esm --config-file ../../.swcrc -C module.type=es6",
-    "build:ts": "tsc --declaration --emitDeclarationOnly --outDir ./dist/dts --project tsconfig.json",
+    "build:ts": "tsc",
     "build": "yarn clean && concurrently \"yarn build:cjs\" \"yarn build:esm\" \"yarn build:ts\"",
     "clean": "npx rimraf dist",
-    "check:types": "tsc --noEmit"
+    "check:types": "tsc --project tsconfig.type.json"
   },
   "devDependencies": {
     "graphql": "^16.3.0",

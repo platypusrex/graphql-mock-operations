@@ -12,15 +12,18 @@
     "dev": "turbo run dev --parallel",
     "dev:example": "npx concurrently \"yarn workspace example-server start\" \"yarn workspace example-client start\" ",
     "dev:example:storybook": "npx concurrently \"yarn dev:example\" \"yarn workspace example-client storybook\"",
+    "create-config": "beemo create-config",
     "format": "beemo prettier --write '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
     "lint": "beemo eslint '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
-    "clean": "turbo run clean",
-    "create-config": "beemo create-config"
+    "typescript": "beemo typescript --workspaces=@graphql-mock-operations",
+    "typescript:ref": "beemo typescript:sync-project-refs",
+    "check:types": "yarn turbo run check:types --scope='@graphql-mock-operations/*'",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
     "@beemo/cli": "^2.0.6",
     "@beemo/core": "^2.1.4",
-    "@platypusrex/dev-configs": "^0.0.3",
+    "@platypusrex/dev-configs": "^0.0.4",
     "turbo": "latest"
   },
   "engines": {

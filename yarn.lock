@@ -2378,10 +2378,10 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@platypusrex/dev-configs@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@platypusrex/dev-configs/-/dev-configs-0.0.4.tgz#4b4dbce70488191b38f7cd5d83460864affdcb1f"
-  integrity sha512-M4mD6TC3FqLVu3HhM0MqaowvExgHZLSVeFimK1KGSLrJx78/kIOtBxLqRBdJhFRHfzWi6M1p2bUkPy++paU41g==
+"@platypusrex/dev-configs@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@platypusrex/dev-configs/-/dev-configs-0.0.5.tgz#eddee7e1f272da32f68ad5884ec81b45f20dfa41"
+  integrity sha512-5Xjyb+L2wtcgjeMvkpOo76EObmBE+WRR6W0aso1kZ2MRENuRLM20m/lGUcnnm++seVvq4kkdRxpGj9Gd1fMeGQ==
   dependencies:
     "@beemo/config-constants" "^1.1.0"
     "@beemo/driver-eslint" "^2.0.5"

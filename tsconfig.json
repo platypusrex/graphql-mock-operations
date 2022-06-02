@@ -6,13 +6,13 @@
       "path": "example/client"
     },
     {
-      "path": "example/client-core-2"
+      "path": "example/client"
     },
     {
       "path": "packages/core"
     },
     {
-      "path": "packages/core-temp"
+      "path": "packages/core"
     },
     {
       "path": "packages/graphql-codegen-plugin"

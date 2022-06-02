@@ -5,5 +5,5 @@ export function createGraphQLErrorMessage(graphQLError?: string | GraphQLError[]
     return typeof graphQLError === 'string' ? [new GraphQLError(graphQLError)] : graphQLError;
   }
 
-  return [new GraphQLError('Unspecified error from ErrorProvider.')];
+  return [new GraphQLError('Unspecified graphql error.')];
 }

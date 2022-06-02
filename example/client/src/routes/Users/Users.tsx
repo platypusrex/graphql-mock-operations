@@ -6,7 +6,6 @@ import { useCreateUser } from '../../hooks/useCreateUser';
 import { usersQuery } from '../../gql';
 import { UsersQuery } from '../../typings/generated';
 import './Users.css';
-import { useDeleteUser } from '../../hooks/useDeleteUser';
 import { UserCard } from './UserCard';
 
 export interface UsersProps {
@@ -25,9 +24,9 @@ const initialFormState: CreateUserFormValues = {
 export const Users: React.FC<UsersProps> = () => {
   const { values, onChange, reset } = useForm<CreateUserFormValues>(initialFormState);
 
-  const { users, error, loading } = useUsers();
+  const { users, error, loading: usersLoading } = useUsers();
 
-  const { book } = useBook();
+  const { book, loading: bookLoading } = useBook();
 
   const { createUser, loading: submitting } = useCreateUser({
     onCompleted: () => {
@@ -61,24 +60,36 @@ export const Users: React.FC<UsersProps> = () => {
     });
   };
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          alignContent: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        Loading...
-      </div>
-    );
+  if (error?.graphQLErrors.length) {
+    return <div>Graphql error: {error.graphQLErrors[0].message}</div>;
   }
 
-  if (error) {
-    return <div>{JSON.stringify(error, null, 2)}</div>;
+  if (error?.networkError) {
+    return <div>Network error: {error.networkError?.message}</div>;
   }
+
+  const usersList = usersLoading ? (
+    <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+      Loading users...
+    </div>
+  ) : (
+    <>
+      {users?.map((user: any) => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </>
+  );
+
+  const bookContent = bookLoading ? (
+    <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+      Loading books...
+    </div>
+  ) : (
+    <pre className="Users-code-block">
+      <h3>Title: {book?.title}</h3>
+      <code>{JSON.stringify(book, null, 2)}</code>
+    </pre>
+  );
 
   return (
     <div>
@@ -93,10 +104,8 @@ export const Users: React.FC<UsersProps> = () => {
         </div>
         <button type="submit">{submitting ? 'Loading...' : 'Create user'}</button>
       </form>
-      {users?.length > 0 && users.map((user: any) => <UserCard key={user.id} user={user} />)}
-      <pre className="Users-code-block">
-        <code>{JSON.stringify(book, null, 2)}</code>
-      </pre>
+      {usersList}
+      {bookContent}
     </div>
   );
 };

@@ -50,21 +50,17 @@ export type Mutation = {
   deleteUser?: Maybe<User>;
 };
 
-
 export type MutationCreateBookArgs = {
   input: CreateBookInput;
 };
-
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
 };
 
-
 export type MutationDeleteBookArgs = {
   id: Scalars['ID'];
 };
-
 
 export type MutationDeleteUserArgs = {
   id: Scalars['ID'];
@@ -78,11 +74,9 @@ export type Query = {
   users: Array<User>;
 };
 
-
 export type QueryBookArgs = {
   id: Scalars['ID'];
 };
-
 
 export type QueryUserArgs = {
   id: Scalars['ID'];
@@ -97,43 +91,140 @@ export type User = {
   name: Scalars['String'];
 };
 
-export type BookFragment = { __typename?: 'Book', id: string, title: string, numPages: number, authorId: string };
+export type AddressFragment = {
+  __typename?: 'Address';
+  addressLineOne: string;
+  city: string;
+  state: string;
+  zip: string;
+};
+
+export type BookFragment = {
+  __typename?: 'Book';
+  id: string;
+  title: string;
+  numPages: number;
+  authorId: string;
+};
 
 export type BookQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
+export type BookQuery = {
+  __typename?: 'Query';
+  book?: {
+    __typename?: 'Book';
+    id: string;
+    title: string;
+    numPages: number;
+    authorId: string;
+  } | null;
+};
 
-export type BookQuery = { __typename?: 'Query', book?: { __typename?: 'Book', id: string, title: string, numPages: number, authorId: string } | null };
+export type BooksQueryVariables = Exact<{ [key: string]: never }>;
+
+export type BooksQuery = {
+  __typename?: 'Query';
+  books: Array<{
+    __typename?: 'Book';
+    id: string;
+    title: string;
+    numPages: number;
+    authorId: string;
+  }>;
+};
 
 export type CreateUserMutationVariables = Exact<{
   input: CreateUserInput;
 }>;
 
-
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, name: string } };
+export type CreateUserMutation = {
+  __typename?: 'Mutation';
+  createUser: {
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  };
+};
 
 export type DeleteUserMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
+export type DeleteUserMutation = {
+  __typename?: 'Mutation';
+  deleteUser?: {
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  } | null;
+};
 
-export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser?: { __typename?: 'User', id: string, name: string } | null };
-
-export type UserFragment = { __typename?: 'User', id: string, name: string };
+export type UserFragment = {
+  __typename?: 'User';
+  id: string;
+  name: string;
+  address?: Array<{
+    __typename?: 'Address';
+    addressLineOne: string;
+    city: string;
+    state: string;
+    zip: string;
+  }> | null;
+};
 
 export type UserQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
+export type UserQuery = {
+  __typename?: 'Query';
+  user?: {
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  } | null;
+};
 
-export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, name: string } | null };
+export type UsersQueryVariables = Exact<{ [key: string]: never }>;
 
-export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, name: string }> };
-
+export type UsersQuery = {
+  __typename?: 'Query';
+  users: Array<{
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  }>;
+};
 
 export type GraphQLErrors = { graphQLErrors?: GraphQLError | GraphQLError[] };
 export type NetworkError = { networkError?: Error };
@@ -145,64 +236,137 @@ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   info: GraphQLResolveInfo
 ) => Promise<TResult> | TResult | GraphQLErrors | NetworkError | OperationLoading;
 
-type ResolverType<TResult, TArgs> = Record<keyof TResult, ResolverFn<TResult[keyof TResult], {}, {}, TArgs>>;  
-  
+type ResolverType<TResult, TArgs> = Record<
+  keyof TResult,
+  ResolverFn<TResult[keyof TResult], {}, {}, TArgs>
+>;
+
 export type BookMockOperationArgs = Exact<{
   id: Scalars['ID'];
 }>;
 
 export type BookMockOperationResult = {
-	book: { __typename?: 'Book', id: string, title: string, numPages: number, authorId: string } | null
+  book: {
+    __typename?: 'Book';
+    id: string;
+    title: string;
+    numPages: number;
+    authorId: string;
+  } | null;
 };
 
 export type BookMockOperation = ResolverType<BookMockOperationResult, BookMockOperationArgs>;
+
+export type BooksMockOperationArgs = Exact<{ [key: string]: never }>;
+
+export type BooksMockOperationResult = {
+  books: Array<{
+    __typename?: 'Book';
+    id: string;
+    title: string;
+    numPages: number;
+    authorId: string;
+  }>;
+};
+
+export type BooksMockOperation = ResolverType<BooksMockOperationResult, BooksMockOperationArgs>;
 
 export type CreateUserMockOperationArgs = Exact<{
   input: CreateUserInput;
 }>;
 
 export type CreateUserMockOperationResult = {
-	createUser: { __typename?: 'User', id: string, name: string }
+  createUser: {
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  };
 };
 
-export type CreateUserMockOperation = ResolverType<CreateUserMockOperationResult, CreateUserMockOperationArgs>;
+export type CreateUserMockOperation = ResolverType<
+  CreateUserMockOperationResult,
+  CreateUserMockOperationArgs
+>;
 
 export type DeleteUserMockOperationArgs = Exact<{
   id: Scalars['ID'];
 }>;
 
 export type DeleteUserMockOperationResult = {
-	deleteUser: { __typename?: 'User', id: string, name: string } | null
+  deleteUser: {
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  } | null;
 };
 
-export type DeleteUserMockOperation = ResolverType<DeleteUserMockOperationResult, DeleteUserMockOperationArgs>;
+export type DeleteUserMockOperation = ResolverType<
+  DeleteUserMockOperationResult,
+  DeleteUserMockOperationArgs
+>;
 
 export type UserMockOperationArgs = Exact<{
   id: Scalars['ID'];
 }>;
 
 export type UserMockOperationResult = {
-	user: { __typename?: 'User', id: string, name: string } | null
+  user: {
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  } | null;
 };
 
 export type UserMockOperation = ResolverType<UserMockOperationResult, UserMockOperationArgs>;
 
-export type UsersMockOperationArgs = Exact<{ [key: string]: never; }>;
+export type UsersMockOperationArgs = Exact<{ [key: string]: never }>;
 
 export type UsersMockOperationResult = {
-	users: Array<{ __typename?: 'User', id: string, name: string }>
+  users: Array<{
+    __typename?: 'User';
+    id: string;
+    name: string;
+    address?: Array<{
+      __typename?: 'Address';
+      addressLineOne: string;
+      city: string;
+      state: string;
+      zip: string;
+    }> | null;
+  }>;
 };
 
 export type UsersMockOperation = ResolverType<UsersMockOperationResult, UsersMockOperationArgs>;
 
-export type QueryMockOperations = BookMockOperation
-	 & UserMockOperation
-	 & UsersMockOperation;
+export type QueryMockOperations = BookMockOperation &
+  BooksMockOperation &
+  UserMockOperation &
+  UsersMockOperation;
 
-export type MutationMockOperations = CreateUserMockOperation
-	 & DeleteUserMockOperation;
+export type MutationMockOperations = CreateUserMockOperation & DeleteUserMockOperation;
 
 export type MockOperations = {
-	Query: Partial<QueryMockOperations>;
-	Mutation: Partial<MutationMockOperations>;
+  Query: Partial<QueryMockOperations>;
+  Mutation: Partial<MutationMockOperations>;
 };

@@ -1,9 +1,0 @@
-#import './addressFragment.graphql'
-
-fragment User on User {
-  id
-  name
-  address {
-    ...Address
-  }
-}

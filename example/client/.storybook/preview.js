@@ -1,4 +1,4 @@
-import { MockApolloProvider as Provider } from '../src/lib/operations';
+import { MockProvider as Provider } from '../src/lib/mocks';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

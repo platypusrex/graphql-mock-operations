@@ -19,8 +19,6 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
       const users = currentUsers?.users;
       if (!users) return;
 
-      console.log({ result, users, newUsers: users.filter((user) => user.id !== result.id) });
-
       cache.writeQuery<UsersQuery>({
         query: usersQuery,
         data: {
@@ -38,6 +36,7 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
 
   return (
     <div key={user.id} className="user-card">
+      <h3>User name: {user.name}</h3>
       <pre className="Users-code-block">
         <code>{JSON.stringify(user, null, 2)}</code>
       </pre>

@@ -1,10 +1,10 @@
 import React, { ChangeEvent, useState } from 'react';
-import { RenderOptions } from '@storybook/addons';
+import type { RenderOptions } from '@storybook/addons';
 import { useGlobals } from '@storybook/api';
 import { styled } from '@storybook/theming';
 import { AddonPanel, Form, H2, SyntaxHighlighter } from '@storybook/components';
 import { ADDON_ID } from '../constants';
-import { OperationMeta } from '../types/shared';
+import type { OperationMeta } from '../types/shared';
 
 const PanelContainer = styled.div`
   padding: 20px;

@@ -1,6 +1,6 @@
-import { ComponentType, FC } from 'react';
+import type { ComponentType, FC } from 'react';
 import { useParameter, useCallback, useGlobals, useState, useEffect } from '@storybook/addons';
-import {
+import type {
   ApolloClientOptions,
   ApolloLink,
   InMemoryCache,
@@ -8,7 +8,7 @@ import {
   NormalizedCacheObject,
 } from '@apollo/client';
 import { ADDON_ID, PARAM_KEY } from '../constants';
-import { OperationMeta } from '../types/shared';
+import type { OperationMeta } from '../types/shared';
 
 interface MockProviderProps<TOperationState> {
   Provider: ComponentType<any>;

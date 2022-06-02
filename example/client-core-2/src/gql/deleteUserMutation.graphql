@@ -1,7 +1,0 @@
-#import './userFragment.graphql'
-
-mutation DeleteUser($id: ID!) {
-  deleteUser(id: $id) {
-    ...User
-  }
-}

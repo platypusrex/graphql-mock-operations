@@ -9,7 +9,6 @@ export function createErrorLink(graphQLError?: string | GraphQLError[]): ApolloL
       delay(100)
         .then(() => {
           observer.next({
-            // @ts-ignore
             errors: createGraphQLErrorMessage(graphQLError),
           });
           observer.complete();

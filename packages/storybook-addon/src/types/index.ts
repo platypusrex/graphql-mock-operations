@@ -1,5 +1,5 @@
-import { ComponentProps, JSXElementConstructor } from 'react';
-import { ComponentStory } from '@storybook/react';
+import type { ComponentProps, JSXElementConstructor } from 'react';
+import type { ComponentStory } from '@storybook/react';
 
 type ReactComponentProps = keyof JSX.IntrinsicElements | JSXElementConstructor<any>;
 interface ApolloStoryParameters<TProviderProps extends ReactComponentProps> {

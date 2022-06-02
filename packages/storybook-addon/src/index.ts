@@ -1,6 +1,6 @@
 /* eslint-disable import/no-import-module-exports */
-import { ComponentProps, JSXElementConstructor } from 'react';
-import { ComponentStory } from '@storybook/react';
+import type { ComponentProps, JSXElementConstructor } from 'react';
+import type { ComponentStory } from '@storybook/react';
 
 type AnyObject<T = unknown> = Record<string, T>;
 

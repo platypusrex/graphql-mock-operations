@@ -62,9 +62,11 @@ export class OperationModel<TModel extends OperationType<any, any>> {
         'update model: more than one model found. Please provide a unique key/value pair for improved results.'
       );
     }
+
     if (models.length === 0) {
       throw new Error('update model: model not found. Please provide a unique key/value pair.');
     }
+
     let model = models[0];
     model = deepmerge(model, data);
     this._models.map((m) => (m[key] === value ? model : m));
@@ -81,6 +83,7 @@ export class OperationModel<TModel extends OperationType<any, any>> {
     if (!model) {
       throw new Error('Delete model: model not found. Please provide a unique key/value pair.');
     }
+
     this._models = this._models.filter((m) => m[key] !== value);
     return model;
   };

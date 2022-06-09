@@ -7,18 +7,19 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "build:packages": "turbo run build --parallel --scope=\"@graphql-mock-operations/core\" --scope=\"@graphql-mock-operations/core-temp\" --scope=\"@graphql-mock-operations/codegen-plugin\"  --scope=\"@graphql-mock-operations/storybook-addon\"",
-    "dev": "turbo run dev --parallel",
-    "dev:example": "npx concurrently \"yarn workspace example-server start\" \"yarn workspace example-client start\" ",
-    "dev:example:storybook": "npx concurrently \"yarn dev:example\" \"yarn workspace example-client storybook\"",
     "create-config": "beemo create-config",
+    "clean": "turbo run clean",
+    "clean:deps": "turbo run clean:deps",
+    "clean:all": "turbo run clean clean:deps --parallel",
+    "build": "turbo run build",
+    "start": "turbo run start --scope='@example/*'",
+    "storybook": "turbo run storybook --scope='@example/client'",
+    "start:all": "turbo run start storybook --parallel",
     "format": "beemo prettier --write '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
     "lint": "beemo eslint '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
     "typescript": "beemo typescript --workspaces=@graphql-mock-operations",
     "typescript:ref": "beemo typescript:sync-project-refs",
-    "check:types": "yarn turbo run check:types --scope='@graphql-mock-operations/*'",
-    "clean": "turbo run clean"
+    "check:types": "yarn turbo run check:types --scope='@graphql-mock-operations/*'"
   },
   "devDependencies": {
     "@beemo/cli": "^2.0.6",

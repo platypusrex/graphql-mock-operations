@@ -1,20 +1,29 @@
 {
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^check:types", "^build"],
       "outputs": ["dist/**"]
     },
     "lint": {
       "outputs": []
-    },
-    "dev": {
-      "cache": false
     },
     "check:types": {
       "outputs": []
     },
     "clean": {
       "outputs": [],
+      "cache": false
+    },
+    "clean:deps": {
+      "outputs": [],
+      "cache": false
+    },
+    "start": {
+      "dependsOn": [],
+      "cache": false
+    },
+    "storybook": {
+      "dependsOn": [],
       "cache": false
     }
   }

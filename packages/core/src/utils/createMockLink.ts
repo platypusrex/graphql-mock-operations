@@ -1,5 +1,7 @@
-import { graphql, GraphQLSchema, print } from 'graphql';
-import { ApolloError, ApolloLink, Observable } from '@apollo/client';
+import { graphql, print } from 'graphql';
+import type { GraphQLSchema } from 'graphql';
+import { ApolloLink, Observable } from '@apollo/client';
+import type { ApolloError } from '@apollo/client';
 import type { CreateLinkOptions } from '../types';
 import { delay } from './delay';
 import { LOADING_ERROR_CODE } from './generateOperationLoadingError';

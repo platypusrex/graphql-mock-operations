@@ -1,5 +1,5 @@
 {
-  "name": "@examples/client",
+  "name": "@example/client",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Frank Cooke",
@@ -30,7 +30,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
+    "start": "DISABLE_ESLINT_PLUGIN=true PORT=3005 react-scripts start",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "test": "DISABLE_ESLINT_PLUGIN=true react-scripts test",
     "eject": "react-scripts eject",
@@ -43,9 +43,6 @@
       "react-app",
       "react-app/jest"
     ]
-  },
-  "beemoConfig": {
-    "createReactApp": true
   },
   "browserslist": {
     "production": [

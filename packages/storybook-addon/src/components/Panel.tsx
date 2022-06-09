@@ -3,8 +3,8 @@ import type { RenderOptions } from '@storybook/addons';
 import { useGlobals } from '@storybook/api';
 import { styled } from '@storybook/theming';
 import { AddonPanel, Form, H2, SyntaxHighlighter } from '@storybook/components';
-import { ADDON_ID } from '../constants';
 import type { OperationMeta } from '../types/shared';
+import { ADDON_ID } from '../constants';
 
 const PanelContainer = styled.div`
   padding: 20px;

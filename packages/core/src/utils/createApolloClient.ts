@@ -1,12 +1,10 @@
 import { buildClientSchema } from 'graphql';
 import { addMocksToSchema } from '@graphql-tools/mock';
-import {
-  ApolloClient,
+import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client';
+import type {
   ApolloClientOptions,
-  ApolloLink,
-  InMemoryCache,
-  InMemoryCacheConfig,
   NormalizedCacheObject,
+  InMemoryCacheConfig,
 } from '@apollo/client';
 import type { CreateLinkOptions, LinkSchemaProps } from '../types';
 import { createMockLink } from './createMockLink';
@@ -22,8 +20,8 @@ export function createApolloClient({
   mocks,
   cacheOptions = {},
   clientOptions = {} as any,
-  links = () => [],
-}: CreateApolloClient) {
+  links = (): ApolloLink[] => [],
+}: CreateApolloClient): ApolloClient<NormalizedCacheObject> {
   const { resolvers, introspectionResult, rootValue, context, delay, onResolved } = mocks;
 
   const schema = buildClientSchema(introspectionResult);

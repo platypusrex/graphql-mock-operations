@@ -7,8 +7,8 @@ import type {
   InMemoryCacheConfig,
   NormalizedCacheObject,
 } from '@apollo/client';
-import { ADDON_ID, PARAM_KEY } from '../constants';
 import type { OperationMeta } from '../types/shared';
+import { ADDON_ID, PARAM_KEY } from '../constants';
 
 interface MockProviderProps<TOperationState> {
   Provider: ComponentType<any>;

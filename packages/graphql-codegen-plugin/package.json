@@ -14,11 +14,13 @@
     "build:esm": "swc src -d dist/esm --config-file ../../.swcrc -C module.type=es6",
     "build:ts": "tsc",
     "build": "yarn clean && concurrently \"yarn build:cjs\" \"yarn build:esm\" \"yarn build:ts\"",
-    "clean": "npx rimraf dist",
+    "clean": "rimraf dist",
+    "clean:deps": "rimraf node_modules",
     "check:types": "tsc --project tsconfig.type.json"
   },
   "devDependencies": {
     "graphql": "^16.3.0",
+    "rimraf": "^3.0.2",
     "typescript": "^4.5.5"
   },
   "dependencies": {

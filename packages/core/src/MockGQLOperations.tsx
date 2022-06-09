@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { ApolloError, ApolloProvider } from '@apollo/client';
 import { mergeResolvers } from '@graphql-tools/merge';
+import type { IResolvers } from '@graphql-tools/utils';
 import type { IntrospectionQuery } from 'graphql';
 import type { IntrospectionObjectType } from 'graphql/utilities/getIntrospectionQuery';
-import type { IResolvers } from '@graphql-tools/utils';
-import { OperationModel, ResolverReturn } from './OperationModel';
+import { OperationModel } from './OperationModel';
+import type { ResolverReturn } from './OperationModel';
 import type {
   AnyObject,
   CreateOperationState,
@@ -12,8 +13,10 @@ import type {
   NonEmptyArray,
   OperationFn,
   OperationState,
+  OperationStateObject,
   OperationType,
   ProtectedMockedProviderProps,
+  ResolverFn,
 } from './types';
 import {
   CreateApolloClient,
@@ -136,32 +139,36 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       Parameters<TMockOperation[keyof TMockOperation]>
     > =>
     (scenario: Record<keyof TMockOperation, TOperationState['state'][keyof TMockOperation]>) => ({
-      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       [name]: (
         parent: Parameters<TMockOperation[keyof TMockOperation]>[0],
         variables: Parameters<TMockOperation[keyof TMockOperation]>[1],
         context: Parameters<TMockOperation[keyof TMockOperation]>[2],
         info: Parameters<TMockOperation[keyof TMockOperation]>[3]
-      ) => {
+      ): ReturnType<ResolverFn<any, any, any, any>> => {
         const currentState = scenario[name] ? scenario[name] : 'SUCCESS';
-        let currentStateObj =
-          typeof state === 'function' ? state(parent, variables, context, info) : state;
+        const currentStateArray: NonEmptyArray<
+          OperationStateObject<
+            TOperationState['state'][keyof TMockOperation],
+            any,
+            TMockGQLOperations['models']
+          >
+        > = typeof state === 'function' ? state(parent, variables, context, info) : state;
 
-        // @ts-ignore
-        currentStateObj = [...currentStateObj].find((s) => s.state === currentState);
+        const currentStateObj = [...currentStateArray].find((s) => s.state === currentState);
         if (!currentStateObj) {
           throw new Error(`${name} operation: unable to match state`);
         }
 
-        // @ts-ignore
         const { result } = currentStateObj;
         const { loading, graphQLErrors, networkError } = result ?? {};
         if (loading) {
           return generateOperationLoadingError();
         }
+
         if (graphQLErrors) {
           return new ApolloError({ graphQLErrors });
         }
+
         if (networkError) {
           return new ApolloError({ networkError });
         }
@@ -194,15 +201,17 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
     state?: TMockGQLOperations['state']
   ): MockGQLOperationsCreate<any, any> => {
     const defaultState = (state ?? {}) as TMockGQLOperations['state'];
+
     return operations.reduce<MockGQLOperationsCreate<any, any>>((operationObj, operation) => {
       const key = Object.keys(
         operation({} as TMockGQLOperations['state'])
       )[0] as keyof TMockGQLOperations['state'];
       const operationState = Object.keys(defaultState) ? { [key]: defaultState[key] } : {};
-      // eslint-disable-next-line no-param-reassign
+
       operationObj[key as keyof MockGQLOperationsCreate<any, any>] = operation(
         operationState as unknown as TMockGQLOperations['state']
       )[key];
+
       return operationObj;
     }, {} as MockGQLOperationsCreate<any, any>);
   };
@@ -214,7 +223,6 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
     [this._operations ?? []].reduce<IResolvers>((operationObj, operation) => {
       const keys = Object.keys(operation);
       for (const key of keys as (keyof typeof operation)[]) {
-        // eslint-disable-next-line no-param-reassign
         operationObj[this.generateResolverKey(key)] = this.mapOperations(
           this._operations?.[key] ?? [],
           state
@@ -239,8 +247,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       )?.name;
 
       if (resolverRootKey) {
-        // @ts-ignore
-        acc[resolverRootKey] = {
+        (acc as any)[resolverRootKey] = {
           ...acc[resolverRootKey],
           [operationName]: operations?.[operationName],
         };

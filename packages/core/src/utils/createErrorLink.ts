@@ -1,4 +1,4 @@
-import { GraphQLError } from 'graphql';
+import type { GraphQLError } from 'graphql';
 import { ApolloLink, Observable } from '@apollo/client';
 import { delay } from './delay';
 import { createGraphQLErrorMessage } from './createGraphQLErrorMessage';

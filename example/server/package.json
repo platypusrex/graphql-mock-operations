@@ -1,5 +1,5 @@
 {
-  "name": "@examples/server",
+  "name": "@example/server",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Frank Cooke",

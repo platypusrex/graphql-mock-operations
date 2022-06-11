@@ -8,6 +8,7 @@
       "outputs": []
     },
     "check:types": {
+      "dependsOn": [],
       "outputs": []
     },
     "clean": {

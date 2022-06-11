@@ -17,6 +17,7 @@
     "start:all": "turbo run start storybook --parallel",
     "format": "beemo prettier --write '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
     "lint": "beemo eslint '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}'",
+    "lint:fix": "beemo eslint '{packages,examples}/*/{src,test}/**.{ts,tsx,js,md}' --fix",
     "typescript": "beemo typescript --workspaces=@graphql-mock-operations",
     "typescript:ref": "beemo typescript:sync-project-refs",
     "check:types": "yarn turbo run check:types --scope='@graphql-mock-operations/*'"
@@ -24,7 +25,11 @@
   "devDependencies": {
     "@beemo/cli": "^2.0.6",
     "@beemo/core": "^2.1.4",
+    "@changesets/cli": "^2.22.0",
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
     "@platypusrex/dev-configs": "^0.0.5",
+    "husky": "^8.0.1",
     "turbo": "latest"
   },
   "engines": {

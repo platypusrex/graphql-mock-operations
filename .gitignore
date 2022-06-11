@@ -10,7 +10,6 @@ logs/
 .idea
 /.vscode/
 .eslintcache
-.husky
 .npm
 
 # dependencies

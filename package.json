@@ -22,7 +22,9 @@
     "typescript:ref": "beemo typescript:sync-project-refs",
     "check:types": "yarn turbo run check:types --scope='@graphql-mock-operations/*'",
     "ci": "yarn lint && turbo run check:types build",
-    "prepare": "yarn create:config && husky install"
+    "prepare": "yarn create:config && husky install",
+    "prerelease": "yarn ci",
+    "release": "yarn prerelease && changeset publish"
   },
   "devDependencies": {
     "@beemo/cli": "^2.0.6",

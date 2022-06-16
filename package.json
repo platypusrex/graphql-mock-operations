@@ -25,7 +25,7 @@
     "ci:version": "changeset version",
     "prepare": "yarn create:config && husky install",
     "prerelease": "yarn ci",
-    "release": "yarn prerelease && changeset publish"
+    "release": "yarn prerelease && changeset publish && git push --follow-tags"
   },
   "devDependencies": {
     "@beemo/cli": "^2.0.6",

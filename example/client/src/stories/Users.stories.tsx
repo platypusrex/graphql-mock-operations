@@ -2,7 +2,7 @@ import React from 'react';
 import { ComponentMeta } from '@storybook/react';
 import { StoryWithApollo } from '@graphql-mock-operations/storybook-addon';
 import { Users } from '../routes/Users';
-import { MockProvider, models } from '../lib/mocks';
+import { MockProvider } from '../lib/mocks';
 
 export default {
   title: 'Example/Users',
@@ -17,8 +17,17 @@ Primary.args = {
 };
 Primary.parameters = {
   apolloClient: {
-    operationState: { book: 'SUCCESS', createUser: 'SUCCESS' },
-    mergeOperations: { users: () => [models.user.models[2]] },
+    operationState: {
+      book: 'SUCCESS',
+      createUser: 'SUCCESS',
+      user: 'SUCCESS',
+      users: 'GQL_ERROR',
+      deleteUser: 'SUCCESS'
+    },
+    mergeOperations: ({ user, book }) => ({
+      users: () => [user.models[3]],
+      book: () => book.findOne('id', '3'),
+    }),
     delay: 1200,
   },
 };

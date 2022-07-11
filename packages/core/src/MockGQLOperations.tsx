@@ -14,7 +14,6 @@ import type {
   OperationFn,
   OperationState,
   OperationStateObject,
-  OperationType,
   ProtectedMockedProviderProps,
   ResolverFn,
 } from './types';
@@ -70,7 +69,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
   }
 
   createProvider =
-    (): React.FC<MockProviderProps<TMockGQLOperations['state']>> =>
+    (): React.FC<MockProviderProps<TMockGQLOperations['state'], TMockGQLOperations['models']>> =>
     ({ children, Provider = ApolloProvider, loading, ...props }) => {
       const client = React.useMemo(() => {
         if (loading) {
@@ -81,21 +80,21 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
       return <Provider client={client}>{children}</Provider>;
     };
 
-  createModel = <TModel extends OperationType<any, any>>(
-    name: keyof TModel,
-    data: NonEmptyArray<ResolverReturn<ReturnType<TModel[keyof TModel]>>>
+  createModel = <K extends keyof TMockGQLOperations['state']['operation']>(
+    name: K,
+    data: NonEmptyArray<ResolverReturn<ReturnType<TMockGQLOperations['state']['operation'][K]>>>
   ): void => {
-    this._models = { ...this._models, [name]: new OperationModel<TModel>(data) };
+    this._models = {
+      ...this._models,
+      [name]: new OperationModel<TMockGQLOperations['state']['operation']>(data),
+    };
   };
 
-  queryOperation = <
-    TMockOperation extends OperationType<any, any>,
-    TOperationState extends OperationState<TMockOperation, string>
-  >(
-    name: keyof TMockOperation,
+  queryOperation = <K extends keyof TMockGQLOperations['state']['operation']>(
+    name: K,
     state: CreateOperationState<
-      TMockOperation,
-      TOperationState['state'][keyof TMockOperation],
+      TMockGQLOperations['state']['operation'][K],
+      TMockGQLOperations['state']['state'][K],
       TMockGQLOperations['models']
     >
   ): void => {
@@ -105,14 +104,11 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
     }
   };
 
-  mutationOperation = <
-    TMockOperation extends OperationType<any, any>,
-    TOperationState extends OperationState<TMockOperation, string>
-  >(
-    name: keyof TMockOperation,
+  mutationOperation = <K extends keyof TMockGQLOperations['state']['operation']>(
+    name: K,
     state: CreateOperationState<
-      TMockOperation,
-      TOperationState['state'][keyof TMockOperation],
+      TMockGQLOperations['state']['operation'][K],
+      TMockGQLOperations['state']['state'][K],
       TMockGQLOperations['models']
     >
   ): void => {
@@ -123,33 +119,30 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
   };
 
   private createOperation =
-    <
-      TMockOperation extends OperationType<any, any>,
-      TOperationState extends OperationState<TMockOperation, string>
-    >(
-      name: keyof TMockOperation,
+    <K extends keyof TMockGQLOperations['state']['operation']>(
+      name: K,
       state: CreateOperationState<
-        TMockOperation,
-        TOperationState['state'][keyof TMockOperation],
+        TMockGQLOperations['state']['operation'][K],
+        TMockGQLOperations['state']['state'][K],
         TMockGQLOperations['models']
       >
     ): OperationFn<
-      TOperationState['state'],
+      TMockGQLOperations['state']['state'],
       any,
-      Parameters<TMockOperation[keyof TMockOperation]>
+      Parameters<TMockGQLOperations['state']['operation'][K]>
     > =>
-    (scenario: Record<keyof TMockOperation, TOperationState['state'][keyof TMockOperation]>) => ({
+    (scenario: Record<K, TMockGQLOperations['state']['state'][K]>) => ({
       [name]: (
-        parent: Parameters<TMockOperation[keyof TMockOperation]>[0],
-        variables: Parameters<TMockOperation[keyof TMockOperation]>[1],
-        context: Parameters<TMockOperation[keyof TMockOperation]>[2],
-        info: Parameters<TMockOperation[keyof TMockOperation]>[3]
+        parent: Parameters<TMockGQLOperations['state']['operation'][K]>[0],
+        variables: Parameters<TMockGQLOperations['state']['operation'][K]>[1],
+        context: Parameters<TMockGQLOperations['state']['operation'][K]>[2],
+        info: Parameters<TMockGQLOperations['state']['operation'][K]>[3]
       ): ReturnType<ResolverFn<any, any, any, any>> => {
         const currentState = scenario[name] ? scenario[name] : 'SUCCESS';
         const currentStateArray: NonEmptyArray<
           OperationStateObject<
-            TOperationState['state'][keyof TMockOperation],
-            any,
+            TMockGQLOperations['state']['state'][K],
+            ReturnType<TMockGQLOperations['state']['operation'][K]>,
             TMockGQLOperations['models']
           >
         > = typeof state === 'function' ? state(parent, variables, context, info) : state;
@@ -160,7 +153,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
         }
 
         const { result } = currentStateObj;
-        const { loading, graphQLErrors, networkError } = result ?? {};
+        const { loading, graphQLErrors, networkError } = result ?? ({} as any);
         if (loading) {
           return generateOperationLoadingError();
         }
@@ -173,7 +166,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
           return new ApolloError({ networkError });
         }
 
-        return typeof result === 'function' ? result(this._models) : result;
+        return typeof result === 'function' ? (result as any)(this._models) : result;
       },
     });
 
@@ -183,14 +176,17 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
     delay,
     onResolved,
     ...rest
-  }: MockProviderProps<TMockGQLOperations['state']> &
+  }: MockProviderProps<TMockGQLOperations['state'], TMockGQLOperations['models']> &
     ProtectedMockedProviderProps): CreateApolloClient => ({
     mocks: {
       delay,
       introspectionResult: this.introspectionResult,
       onResolved,
       resolvers: mergeOperations
-        ? this.mergeOperations(mergeOperations)
+        ? this.mergeOperations(
+            typeof mergeOperations === 'function' ? mergeOperations(this._models) : mergeOperations,
+            operationState
+          )
         : this.createOperations(operationState),
     },
     ...rest,
@@ -233,7 +229,10 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
 
   private mergeOperations(
     operations: Partial<TMockGQLOperations['state']['operation']>,
-    operationState?: MockProviderProps<TMockGQLOperations['state']>['operationState']
+    operationState?: MockProviderProps<
+      TMockGQLOperations['state'],
+      TMockGQLOperations['models']
+    >['operationState']
   ): IResolvers {
     const rootResolverTypes = (
       this.introspectionResult as IntrospectionQuery

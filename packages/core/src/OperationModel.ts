@@ -39,7 +39,7 @@ export class OperationModel<TModel extends OperationType<any, any>> {
   };
 
   findLast = (): ResolverReturn<ReturnType<TModel[keyof TModel]>> =>
-    this._models[this._models.length - 1];
+    this._models[this._models?.length - 1];
 
   create = (
     model: ResolverReturn<ReturnType<TModel[keyof TModel]>>
@@ -56,14 +56,14 @@ export class OperationModel<TModel extends OperationType<any, any>> {
     data: Partial<ResolverReturn<ReturnType<TModel[keyof TModel]>>>
   ): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
     const models = this._models.filter((model) => model[key] === value);
-    if (models.length > 1) {
+    if (models?.length > 1) {
       // eslint-disable-next-line no-console
       console.warn(
         'update model: more than one model found. Please provide a unique key/value pair for improved results.'
       );
     }
 
-    if (models.length === 0) {
+    if (models?.length === 0) {
       throw new Error('update model: model not found. Please provide a unique key/value pair.');
     }
 

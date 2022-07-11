@@ -8,7 +8,7 @@ interface UserCardProps {
 }
 
 export const UserCard: React.FC<UserCardProps> = ({ user }) => {
-  const { deleteUser, loading } = useDeleteUser({
+  const { deleteUser, loading, error } = useDeleteUser({
     update: (cache, { data }) => {
       const result = data?.deleteUser;
       if (!result) return;
@@ -41,6 +41,7 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
         <code>{JSON.stringify(user, null, 2)}</code>
       </pre>
       <button onClick={handleDeleteUser}>{loading ? 'Loading...' : `Delete ${user.name}`}</button>
+      {error && <span>{JSON.stringify(error, null, 2)}</span>}
     </div>
   );
 };

@@ -1,12 +1,28 @@
 import { mockBuilder } from '../builder';
-import { BookMockOperation } from '../../../typings/generated';
-import { OperationModelType } from '@graphql-mock-operations/core';
 
-export type BookModel = OperationModelType<BookMockOperation>;
-
-mockBuilder.createModel<BookMockOperation>('book', [
-  { id: '1', title: 'Baby Shark', authorId: '3', numPages: 200 },
-  { id: '2', title: 'Mommy Shark', authorId: '2', numPages: 200 },
-  { id: '3', title: 'Daddy Shark', authorId: '1', numPages: 200 },
-  { id: '4', title: 'DeeDee Shark', authorId: '4', numPages: 200 },
+mockBuilder.createModel('book', [
+  {
+    id: '1',
+    title: 'Titan Sinking',
+    authorId: '3',
+    numPages: 200,
+  },
+  {
+    id: '2',
+    title: 'Crimson Dust',
+    authorId: '2',
+    numPages: 200,
+  },
+  {
+    id: '3',
+    title: 'Dawn of Kaus',
+    authorId: '1',
+    numPages: 200,
+  },
+  {
+    id: '4',
+    title: 'Bionic Revelation',
+    authorId: '4',
+    numPages: 200,
+  },
 ]);

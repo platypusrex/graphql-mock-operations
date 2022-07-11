@@ -57,7 +57,7 @@ export const Panel = ({ active = false, key }: RenderOptions): React.ReactElemen
                   {activeMeta.query}
                 </SyntaxHighlighter>
               </PanelCard>
-              {Object.keys(activeMeta.variables).length > 0 && (
+              {Object.keys(activeMeta.variables)?.length > 0 && (
                 <PanelCard>
                   <PanelTitle>Variables</PanelTitle>
                   <SyntaxHighlighter language="json" copyable bordered padded>

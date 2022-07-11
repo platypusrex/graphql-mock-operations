@@ -1,23 +1,10 @@
 import { MockGQLOperations } from '@graphql-mock-operations/core';
-// operation state
-import {
-  UsersOperationState,
-  UserOperationState,
-  BookOperationState,
-  DeleteUserOperationState,
-  CreateUserOperationState,
-} from './operations';
-// models
-import { BookModel, UserModel } from './models';
 import introspectionResult from './introspection.json';
+import { State, Models } from './types';
 
 export interface MockGQLOperationsType {
-  state: BookOperationState &
-    UserOperationState &
-    UsersOperationState &
-    CreateUserOperationState &
-    DeleteUserOperationState;
-  models: BookModel & UserModel;
+  state: State;
+  models: Models;
 }
 
 export const mockBuilder = new MockGQLOperations<MockGQLOperationsType>({

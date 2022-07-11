@@ -51,10 +51,12 @@ type ClientOptions = Pick<
 
 type CacheOptions = Omit<InMemoryCacheConfig, 'addTypename'>;
 
-export interface MockProviderProps<TOperationState extends OperationState<any, any>> {
+export interface MockProviderProps<TOperationState extends OperationState<any, any>, TModels> {
   loading?: boolean;
   operationState?: RequireAtLeastOne<TOperationState['state']>;
-  mergeOperations?: RequireAtLeastOne<TOperationState['operation']>;
+  mergeOperations?:
+    | RequireAtLeastOne<TOperationState['operation']>
+    | ((models: TModels) => RequireAtLeastOne<TOperationState['operation']>);
   delay?: number;
   cacheOptions?: CacheOptions;
   clientOptions?: ClientOptions;
@@ -73,29 +75,17 @@ export interface OperationStateObject<TOperationState, TOperationReturn, TModels
 }
 
 export type CreateOperationState<
-  TMockOperation extends OperationType<any, any>,
+  TMockOperation extends OperationType<any, any>[keyof TMockOperation],
   TOperationState,
   TModels = any
 > =
   | ((
-      parent: Parameters<TMockOperation[keyof TMockOperation]>[0],
-      args: Parameters<TMockOperation[keyof TMockOperation]>[1],
-      context: Parameters<TMockOperation[keyof TMockOperation]>[2],
-      info: Parameters<TMockOperation[keyof TMockOperation]>[3]
-    ) => NonEmptyArray<
-      OperationStateObject<
-        TOperationState,
-        ReturnType<TMockOperation[keyof TMockOperation]>,
-        TModels
-      >
-    >)
-  | NonEmptyArray<
-      OperationStateObject<
-        TOperationState,
-        ReturnType<TMockOperation[keyof TMockOperation]>,
-        TModels
-      >
-    >;
+      parent: Parameters<TMockOperation>[0],
+      args: Parameters<TMockOperation>[1],
+      context: Parameters<TMockOperation>[2],
+      info: Parameters<TMockOperation>[3]
+    ) => NonEmptyArray<OperationStateObject<TOperationState, ReturnType<TMockOperation>, TModels>>)
+  | NonEmptyArray<OperationStateObject<TOperationState, ReturnType<TMockOperation>, TModels>>;
 
 // MockGQLOperations supporting types
 export type GraphQLErrors = { graphQLErrors?: GraphQLError | GraphQLError[] };
@@ -111,7 +101,7 @@ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
 
 export type OperationType<TResult, TArgs> = Record<
   keyof TResult,
-  ResolverFn<TResult[keyof TResult], {}, {}, TArgs>
+  ResolverFn<TResult[keyof TResult], AnyObject, AnyObject, TArgs>
 >;
 
 export type OperationFn<TState, TResult, TArgs> = (

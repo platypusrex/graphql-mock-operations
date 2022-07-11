@@ -54,7 +54,7 @@ export const WithApolloClient = (Story: FC<unknown>): JSX.Element => {
           {
             ...operationMeta,
             operationName,
-            operationCount: existingOperation.length,
+            operationCount: existingOperation?.length,
           },
         ];
       }

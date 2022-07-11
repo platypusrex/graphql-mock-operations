@@ -48,7 +48,7 @@ export function createMockLink(
           const originalError = result?.errors?.[0].originalError as ApolloError;
           if (originalError) {
             const { graphQLErrors, networkError } = originalError ?? {};
-            graphQLErrors.length && observer.next({ errors: result?.errors });
+            graphQLErrors?.length && observer.next({ errors: result?.errors });
             networkError ? observer.error(networkError) : observer.error(originalError.message);
           } else {
             observer.next(result);

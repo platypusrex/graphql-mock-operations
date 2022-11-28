@@ -6,6 +6,7 @@ import type { IntrospectionQuery } from 'graphql';
 import type { IntrospectionObjectType } from 'graphql/utilities/getIntrospectionQuery';
 import { OperationModel } from './OperationModel';
 import type { ResolverReturn } from './OperationModel';
+import type { CreateApolloClient } from './utils';
 import type {
   AnyObject,
   CreateOperationState,
@@ -18,7 +19,6 @@ import type {
   ResolverFn,
 } from './types';
 import {
-  CreateApolloClient,
   createApolloClient,
   createLoadingApolloClient,
   generateOperationLoadingError,

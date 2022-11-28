@@ -18,4 +18,4 @@ mockBuilder.queryOperation('user', (_, { id }) => [
     state: 'ERROR',
     result: { graphQLErrors: [new GraphQLError('operation failed')] }
   },
-])
+]);

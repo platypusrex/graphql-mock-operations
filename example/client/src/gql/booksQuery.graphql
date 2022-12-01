@@ -1,7 +1,0 @@
-#import './bookFragment.graphql'
-
-query Books {
-  books {
-    ...Book
-  }
-}

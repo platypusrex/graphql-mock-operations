@@ -1,0 +1,25 @@
+{
+  "name": "@examples/server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "author": "Frank Cooke",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node-dev --respawn src/index.ts",
+    "generate": "graphql-codegen --config codegen.ts"
+  },
+  "dependencies": {
+    "@graphql-codegen/cli": "^2.14.1",
+    "apollo-server": "3.11.1",
+    "graphql": "16.3.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/add": "^3.2.1",
+    "@graphql-codegen/cli": "2.14.1",
+    "@graphql-codegen/typescript": "2.8.2",
+    "@graphql-codegen/typescript-resolvers": "2.7.7",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.9.3"
+  }
+}

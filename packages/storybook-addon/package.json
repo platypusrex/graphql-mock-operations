@@ -8,8 +8,7 @@
   "types": "dist/dts/index.d.ts",
   "files": [
     "dist/**/*",
-    "*.js",
-    "*.d.ts"
+    "*.js"
   ],
   "publishConfig": {
     "access": "public"

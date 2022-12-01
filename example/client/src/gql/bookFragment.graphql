@@ -1,6 +1,0 @@
-fragment Book on Book {
-  id
-  title
-  numPages
-  authorId
-}

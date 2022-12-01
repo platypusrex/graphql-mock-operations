@@ -6,6 +6,12 @@
       "path": "example/client"
     },
     {
+      "path": "examples/server"
+    },
+    {
+      "path": "examples/with-apollo"
+    },
+    {
       "path": "packages/core"
     },
     {

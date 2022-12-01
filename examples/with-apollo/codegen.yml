@@ -1,0 +1,22 @@
+overwrite: true
+schema: "http://localhost:4001"
+documents: "src/gql/**/*.ts"
+generates:
+  src/typings/generated.d.ts:
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - add:
+          content: 'declare global {'
+      - add:
+          placement: 'append'
+          content: '}'
+      - add:
+          placement: 'append'
+          content: '/* eslint-enable */'
+      - "typescript"
+      - "typescript-operations"
+      - "@graphql-mock-operations/codegen-plugin"
+  src/lib/mocks/introspection.json:
+    plugins:
+      - "introspection"

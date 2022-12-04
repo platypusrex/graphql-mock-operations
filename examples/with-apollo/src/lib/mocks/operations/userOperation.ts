@@ -4,7 +4,7 @@ import { mockBuilder } from '../builder';
 mockBuilder.queryOperation('user', (_, { id }) => [
   {
     state: 'SUCCESS',
-    result: ({ user }) => user.findOne('id', id),
+    result: ({ user }) => user.findOne({ where: { id } }),
   },
   {
     state: 'EMPTY',

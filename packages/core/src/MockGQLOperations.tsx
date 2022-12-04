@@ -5,7 +5,6 @@ import type { IResolvers } from '@graphql-tools/utils';
 import type { IntrospectionQuery } from 'graphql';
 import type { IntrospectionObjectType } from 'graphql/utilities/getIntrospectionQuery';
 import { OperationModel } from './OperationModel';
-import type { ResolverReturn } from './OperationModel';
 import type { CreateApolloClient } from './utils';
 import type {
   AnyObject,
@@ -17,6 +16,7 @@ import type {
   OperationStateObject,
   ProtectedMockedProviderProps,
   ResolverFn,
+  ResolverReturnType,
 } from './types';
 import {
   createApolloClient,
@@ -82,7 +82,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
 
   createModel = <K extends keyof TMockGQLOperations['state']['operation']>(
     name: K,
-    data: NonEmptyArray<ResolverReturn<ReturnType<TMockGQLOperations['state']['operation'][K]>>>
+    data: NonEmptyArray<ResolverReturnType<TMockGQLOperations['state']['operation'][K]>>
   ): void => {
     this._models = {
       ...this._models,
@@ -149,6 +149,7 @@ export class MockGQLOperations<TMockGQLOperations extends MockGQLOperationsType<
 
         const currentStateObj = [...currentStateArray].find((s) => s.state === currentState);
         if (!currentStateObj) {
+          // @ts-ignore
           throw new Error(`${name} operation: unable to match state`);
         }
 

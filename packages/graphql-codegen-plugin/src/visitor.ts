@@ -113,9 +113,9 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
         });
       },
     };
-    const processor = new (preResolveTypes
-      ? PreResolveTypesProcessor
-      : TypeScriptSelectionSetProcessor)(processorConfig);
+    const processor = new (
+      preResolveTypes ? PreResolveTypesProcessor : TypeScriptSelectionSetProcessor
+    )(processorConfig);
 
     this.setSelectionSetHandler(
       new SelectionSetToObject(
@@ -224,9 +224,9 @@ export class TypeScriptDocumentsVisitor extends BaseDocumentsVisitor<
       ) as SelectionSetToObject;
       const { transformedSelectionSets } = selectionSet.transformGroupedSelections();
 
-      const selectionSetObject = (transformedSelectionSets as NameAndType[])?.reduce<
-        SelectionSetObject
-      >((acc, curr) => {
+      const selectionSetObject = (
+        transformedSelectionSets as NameAndType[]
+      )?.reduce<SelectionSetObject>((acc, curr) => {
         let currentKey: keyof NameAndType | 'operationKind';
         let currentValue;
         for (const key in curr) {

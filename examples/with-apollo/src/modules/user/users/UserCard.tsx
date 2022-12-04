@@ -1,6 +1,7 @@
 import React from 'react';
-import { useDeleteUser } from '../../hooks/useDeleteUser';
-import { usersQuery } from '../../gql';
+import NextLink from 'next/link';
+import { useDeleteUser } from '../../../hooks/useDeleteUser';
+import { usersQuery } from '../../../gql';
 import styles from './Users.module.css';
 
 interface UserCardProps {
@@ -36,7 +37,10 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
 
   return (
     <div key={user.id} className={styles.userCard}>
-      <h3>{user.name}</h3>
+      <NextLink href={{ pathname: '/user/[id]', query: { id: user.id } }}>
+        <h3>{user.name}</h3>
+      </NextLink>
+      <p>{user.email}</p>
       <pre className={styles.usersCodeBlock}>
         <code>{JSON.stringify(user, null, 2)}</code>
       </pre>

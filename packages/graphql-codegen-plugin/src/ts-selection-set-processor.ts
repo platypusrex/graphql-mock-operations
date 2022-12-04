@@ -8,9 +8,7 @@ import {
   SelectionSetProcessorConfig,
 } from '@graphql-codegen/visitor-plugin-common';
 
-export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<
-  SelectionSetProcessorConfig
-> {
+export class TypeScriptSelectionSetProcessor extends BaseSelectionSetProcessor<SelectionSetProcessorConfig> {
   transformPrimitiveFields(
     schemaType: GraphQLInterfaceType | GraphQLObjectType,
     fields: PrimitiveField[]

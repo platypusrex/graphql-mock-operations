@@ -4,6 +4,7 @@ mockBuilder.createModel('user', [
   {
     id: '1',
     name: 'Zirkle Haugen',
+    email: 'zhaugen@email.com',
     address: [
       {
         addressLineOne: '100 Baker Ave',
@@ -16,6 +17,7 @@ mockBuilder.createModel('user', [
   {
     id: '2',
     name: 'Ziegler Johnson',
+    email: 'zjohnson@email.com',
     address: [
       {
         addressLineOne: '200 Lakeside Dr',
@@ -28,6 +30,7 @@ mockBuilder.createModel('user', [
   {
     id: '3',
     name: 'Zerbe Evans',
+    email: 'zevans@email.com',
     address: [
       {
         addressLineOne: '300 Franklin Dr',
@@ -40,6 +43,7 @@ mockBuilder.createModel('user', [
   {
     id: '4',
     name: 'Zacharias Wright',
+    email: 'zwright@email.com',
     address: [
       {
         addressLineOne: '500 Sycamore Ln',

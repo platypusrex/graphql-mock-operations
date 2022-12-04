@@ -281,10 +281,7 @@ export class SelectionSetToObject extends CodegenSelectionSetToObject {
           isConditional
         ),
         selectionSet: this._processor.config.wrapTypeWithModifiers(
-          selectionSet
-            .transformSelectionSet()
-            .split(`\n`)
-            .join(`\n  `),
+          selectionSet.transformSelectionSet().split(`\n`).join(`\n  `),
           selectedFieldType
         ),
         type: realSelectedFieldType.name,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentMeta } from '@storybook/react';
 import { StoryWithApollo } from '@graphql-mock-operations/storybook-addon';
-import { Users } from '../modules/User';
+import { Users } from '../modules/user/users';
 import { MockProvider } from '../lib/mocks';
 
 export default {
@@ -42,8 +42,8 @@ GQLError.parameters = {
 export const FirstUserOnly = Template.bind({});
 FirstUserOnly.parameters = {
   apolloClient: {
-    mergeOperations: (models) => ({
-      users: () => [models.user.models[0]],
+    mergeOperations: ({ user }) => ({
+      users: () => [user.models[0]],
     }),
   },
 };
@@ -51,8 +51,8 @@ FirstUserOnly.parameters = {
 export const BookById = Template.bind({});
 BookById.parameters = {
   apolloClient: {
-    mergeOperations: (models) => ({
-      book: () => models.book.findOne('id', '2'),
+    mergeOperations: ({ book }) => ({
+      book: () => book.findOne({ where: { id: '2' } }),
     }),
   },
 };

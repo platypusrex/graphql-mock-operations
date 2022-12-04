@@ -72,12 +72,17 @@ export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
   books: Array<Book>;
+  booksByAuthorId?: Maybe<Array<Book>>;
   user?: Maybe<User>;
   users: Array<User>;
 };
 
 export type QueryBookArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryBooksByAuthorIdArgs = {
+  authorId: Scalars['ID'];
 };
 
 export type QueryUserArgs = {
@@ -270,6 +275,12 @@ export type QueryResolvers<
     RequireFields<QueryBookArgs, 'id'>
   >;
   books?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>;
+  booksByAuthorId?: Resolver<
+    Maybe<Array<ResolversTypes['Book']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryBooksByAuthorIdArgs, 'authorId'>
+  >;
   user?: Resolver<
     Maybe<ResolversTypes['User']>,
     ParentType,

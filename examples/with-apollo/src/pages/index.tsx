@@ -1,4 +1,4 @@
-import { Users } from '../modules/User';
+import { Users } from '../modules/user/users';
 import { getServerSideApolloProps } from '../lib/apollo';
 
 // eslint-disable-next-line import/no-default-export

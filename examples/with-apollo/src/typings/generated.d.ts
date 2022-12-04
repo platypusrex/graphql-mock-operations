@@ -76,6 +76,7 @@ export type Query = {
   __typename?: 'Query';
   book?: Maybe<Book>;
   books: Array<Book>;
+  booksByAuthorId?: Maybe<Array<Book>>;
   user?: Maybe<User>;
   users: Array<User>;
 };
@@ -83,6 +84,11 @@ export type Query = {
 
 export type QueryBookArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryBooksByAuthorIdArgs = {
+  authorId: Scalars['ID'];
 };
 
 
@@ -110,6 +116,13 @@ export type BookQueryVariables = Exact<{
 
 export type BookQuery = { __typename?: 'Query', book?: { __typename?: 'Book', id: string, title: string, numPages: number, authorId: string } | null };
 
+export type BooksByAuthorIdQueryVariables = Exact<{
+  authorId: Scalars['ID'];
+}>;
+
+
+export type BooksByAuthorIdQuery = { __typename?: 'Query', booksByAuthorId?: Array<{ __typename?: 'Book', id: string, title: string, numPages: number, authorId: string }> | null };
+
 export type BooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -120,28 +133,28 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } };
 
 export type DeleteUserMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser?: { __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null };
+export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser?: { __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null };
 
-export type UserFragment = { __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null };
+export type UserFragment = { __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null };
 
 export type UserQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null };
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null }> };
+export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null }> };
 
 
 export type GraphQLErrors = { graphQLErrors?: GraphQLError | GraphQLError[] };
@@ -166,6 +179,16 @@ export type BookMockOperationResult = {
 
 export type BookMockOperation = ResolverType<BookMockOperationResult, BookMockOperationArgs>;
 
+export type BooksByAuthorIdMockOperationArgs = Exact<{
+  authorId: Scalars['ID'];
+}>;
+
+export type BooksByAuthorIdMockOperationResult = {
+	booksByAuthorId: Array<{ __typename?: 'Book', id: string, title: string, numPages: number, authorId: string }> | null
+};
+
+export type BooksByAuthorIdMockOperation = ResolverType<BooksByAuthorIdMockOperationResult, BooksByAuthorIdMockOperationArgs>;
+
 export type BooksMockOperationArgs = Exact<{ [key: string]: never; }>;
 
 export type BooksMockOperationResult = {
@@ -179,7 +202,7 @@ export type CreateUserMockOperationArgs = Exact<{
 }>;
 
 export type CreateUserMockOperationResult = {
-	createUser: { __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null }
+	createUser: { __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null }
 };
 
 export type CreateUserMockOperation = ResolverType<CreateUserMockOperationResult, CreateUserMockOperationArgs>;
@@ -189,7 +212,7 @@ export type DeleteUserMockOperationArgs = Exact<{
 }>;
 
 export type DeleteUserMockOperationResult = {
-	deleteUser: { __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null
+	deleteUser: { __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null
 };
 
 export type DeleteUserMockOperation = ResolverType<DeleteUserMockOperationResult, DeleteUserMockOperationArgs>;
@@ -199,7 +222,7 @@ export type UserMockOperationArgs = Exact<{
 }>;
 
 export type UserMockOperationResult = {
-	user: { __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null
+	user: { __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null } | null
 };
 
 export type UserMockOperation = ResolverType<UserMockOperationResult, UserMockOperationArgs>;
@@ -207,12 +230,13 @@ export type UserMockOperation = ResolverType<UserMockOperationResult, UserMockOp
 export type UsersMockOperationArgs = Exact<{ [key: string]: never; }>;
 
 export type UsersMockOperationResult = {
-	users: Array<{ __typename?: 'User', id: string, name: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null }>
+	users: Array<{ __typename?: 'User', id: string, name: string, email: string, address?: Array<{ __typename?: 'Address', addressLineOne: string, city: string, state: string, zip: string }> | null }>
 };
 
 export type UsersMockOperation = ResolverType<UsersMockOperationResult, UsersMockOperationArgs>;
 
 export type QueryMockOperations = BookMockOperation
+	 & BooksByAuthorIdMockOperation
 	 & BooksMockOperation
 	 & UserMockOperation
 	 & UsersMockOperation;

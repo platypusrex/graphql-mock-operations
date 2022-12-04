@@ -1,3 +1,4 @@
+import '../src/styles/globals.css';
 import { MockProvider as Provider } from '../src/lib/mocks';
 
 export const parameters = {

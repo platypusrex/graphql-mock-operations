@@ -1,90 +1,96 @@
 import deepmerge from 'deepmerge';
 import type {
-  GraphQLErrors,
-  NetworkError,
+  DeepPartial,
   NonEmptyArray,
-  OperationLoading,
   OperationType,
+  ResolverReturnType,
+  WhereQuery,
 } from './types';
 
-export type ResolverReturn<T> = T extends
-  | GraphQLErrors
-  | NetworkError
-  | OperationLoading
-  | Promise<any>
-  ? never
-  : NonNullable<T>;
-
 export class OperationModel<TModel extends OperationType<any, any>> {
-  private _models: ResolverReturn<ReturnType<TModel[keyof TModel]>>[];
-  constructor(models: NonEmptyArray<ResolverReturn<ReturnType<TModel[keyof TModel]>>>) {
-    this._models = models;
+  private _models = new Map<number, ResolverReturnType<TModel[keyof TModel]>>();
+
+  constructor(models: NonEmptyArray<ResolverReturnType<TModel[keyof TModel]>>) {
+    models.forEach((model, i) => {
+      this._models.set(i, model);
+    });
   }
 
-  get models(): ResolverReturn<ReturnType<TModel[keyof TModel]>>[] {
-    return this._models;
+  private getModelDataFromQuery = ({
+    where,
+  }: WhereQuery<TModel>): { key: number; data: ResolverReturnType<TModel[keyof TModel]>; size: number } | null => {
+    const modelProps = Object.entries(where ?? {});
+    if (!modelProps?.length) {
+      throw new Error('At least one query property must be provided');
+    }
+
+    const models = Array.from(this._models.entries()).filter(([, m]) => {
+      return modelProps.every(([key, value]) => m[key] === value);
+    });
+    if (!models?.length) return null;
+
+    const [model] = models;
+    return { key: model[0], data: model[1], size: models.length };
+  };
+
+  get models(): ResolverReturnType<TModel[keyof TModel]>[] {
+    return Array.from(this._models.values());
   }
 
-  findOne = (
-    key: keyof Omit<ResolverReturn<ReturnType<TModel[keyof TModel]>>, '__typename'>,
-    value: ResolverReturn<ReturnType<TModel[keyof TModel]>>[keyof ResolverReturn<
-      ReturnType<TModel[keyof TModel]>
-    >]
-  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> | null =>
-    this._models.find((model) => model[key] === value) ?? null;
+  findOne = ({ where }: WhereQuery<TModel>): ResolverReturnType<TModel[keyof TModel]> | null => {
+    const model = this.getModelDataFromQuery({ where });
+    return model?.data ?? null;
+  };
 
-  findFirst = (): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
-    const [firstModel] = this._models;
+  findFirst = (): ResolverReturnType<TModel[keyof TModel]> | null => {
+    const [firstModel] = this._models.values();
+    if (!firstModel) return null;
     return firstModel;
   };
 
-  findLast = (): ResolverReturn<ReturnType<TModel[keyof TModel]>> =>
-    this._models[this._models?.length - 1];
-
-  create = (
-    model: ResolverReturn<ReturnType<TModel[keyof TModel]>>
-  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
-    this._models = [...this._models, model];
+  findLast = (): ResolverReturnType<TModel[keyof TModel]> | null => {
+    const model = Array.from(this._models.values()).at(this._models.size - 1);
+    if (!model) return null;
     return model;
   };
 
+  create = ({
+    data,
+  }: {
+    data: ResolverReturnType<TModel[keyof TModel]>;
+  }): ResolverReturnType<TModel[keyof TModel]> => {
+    this._models.set(this._models.size - 1, data);
+    return data;
+  };
+
   update = (
-    key: keyof Omit<ResolverReturn<ReturnType<TModel[keyof TModel]>>, '__typename'>,
-    value: ResolverReturn<ReturnType<TModel[keyof TModel]>>[keyof ResolverReturn<
-      ReturnType<TModel[keyof TModel]>
-    >],
-    data: Partial<ResolverReturn<ReturnType<TModel[keyof TModel]>>>
-  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
-    const models = this._models.filter((model) => model[key] === value);
-    if (models?.length > 1) {
+    { where }: WhereQuery<TModel>,
+    { data }: { data: DeepPartial<ResolverReturnType<TModel[keyof TModel]>> }
+  ): ResolverReturnType<TModel[keyof TModel]> => {
+    const model = this.getModelDataFromQuery({ where });
+    if (model && model.size > 2) {
       // eslint-disable-next-line no-console
       console.warn(
         'update model: more than one model found. Please provide a unique key/value pair for improved results.'
       );
     }
 
-    if (models?.length === 0) {
-      throw new Error('update model: model not found. Please provide a unique key/value pair.');
+    if (!model) {
+      throw new Error('Model not found. Please provide a unique key/value pair.');
     }
 
-    let model = models[0];
-    model = deepmerge(model, data);
-    this._models.map((m) => (m[key] === value ? model : m));
-    return model;
+    const updatedModel = deepmerge<ResolverReturnType<TModel[keyof TModel]>>(model.data, data);
+    this._models.set(model.key, { ...this._models.get(model.key), ...updatedModel });
+    return updatedModel;
   };
 
-  delete = (
-    key: keyof Omit<ResolverReturn<ReturnType<TModel[keyof TModel]>>, '__typename'>,
-    value: ResolverReturn<ReturnType<TModel[keyof TModel]>>[keyof ResolverReturn<
-      ReturnType<TModel[keyof TModel]>
-    >]
-  ): ResolverReturn<ReturnType<TModel[keyof TModel]>> => {
-    const model = this._models.find((m) => m[key] === value);
+  delete = ({ where }: WhereQuery<TModel>): ResolverReturnType<TModel[keyof TModel]> => {
+    const model = this.getModelDataFromQuery({ where });
     if (!model) {
       throw new Error('Delete model: model not found. Please provide a unique key/value pair.');
     }
 
-    this._models = this._models.filter((m) => m[key] !== value);
-    return model;
+    this._models.delete(model.key);
+    return model.data;
   };
 }

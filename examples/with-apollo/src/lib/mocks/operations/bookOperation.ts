@@ -3,7 +3,7 @@ import { mockBuilder } from '../builder';
 mockBuilder.queryOperation('book', (_, { id }) => [
   {
     state: 'SUCCESS',
-    result: ({ book }) => book.findOne('id', id),
+    result: ({ book }) => book.findOne({ where: { id } }),
   },
   {
     state: 'EMPTY',

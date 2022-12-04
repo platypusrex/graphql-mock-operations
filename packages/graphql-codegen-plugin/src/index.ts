@@ -25,9 +25,11 @@ export const plugin: PluginFunction<TypeScriptDocumentsPluginConfig, Types.Compl
   const allAst = concatAST(documents.map((v) => v.document!));
 
   const allFragments: LoadedFragment[] = [
-    ...(allAst.definitions.filter(
-      (d) => d.kind === Kind.FRAGMENT_DEFINITION
-    ) as FragmentDefinitionNode[]).map((fragmentDef) => ({
+    ...(
+      allAst.definitions.filter(
+        (d) => d.kind === Kind.FRAGMENT_DEFINITION
+      ) as FragmentDefinitionNode[]
+    ).map((fragmentDef) => ({
       isExternal: false,
       name: fragmentDef.name.value,
       node: fragmentDef,

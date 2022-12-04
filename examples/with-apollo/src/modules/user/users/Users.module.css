@@ -62,7 +62,20 @@
 }
 
 .userCard h3 {
+  width: fit-content;
   margin: 0;
+  cursor: pointer;
+  transition: color .15s ease-in-out;
+}
+
+.userCard h3:hover {
+  color: cornflowerblue;
+  transition: color .15s ease-in-out;
+}
+
+.userCard > p {
+  margin-top: 0.175rem;
+  color: #6a6a6a;
 }
 
 .userCard button {

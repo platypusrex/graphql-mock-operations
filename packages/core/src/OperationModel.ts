@@ -18,7 +18,11 @@ export class OperationModel<TModel extends OperationType<any, any>> {
 
   private getModelDataFromQuery = ({
     where,
-  }: WhereQuery<TModel>): { key: number; data: ResolverReturnType<TModel[keyof TModel]>; size: number } | null => {
+  }: WhereQuery<TModel>): {
+    key: number;
+    data: ResolverReturnType<TModel[keyof TModel]>;
+    size: number;
+  } | null => {
     const modelProps = Object.entries(where ?? {});
     if (!modelProps?.length) {
       throw new Error('At least one query property must be provided');
